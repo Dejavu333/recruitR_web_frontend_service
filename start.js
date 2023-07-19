@@ -1,5 +1,5 @@
-const email = document.getElementById('e-mail');
-const emailConfirm = document.getElementById('e-mail-confirm');
+const email = document.querySelector('#e-mail');
+const emailConfirm = document.querySelector('#e-mail-confirm');
 
 email.addEventListener('keyup', () => {
     const valid = isValidEmail(email);

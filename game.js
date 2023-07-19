@@ -4,14 +4,14 @@ const MAX_QUESTIONS = 3;
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'];
 
 // elements
-const questionElem = document.getElementById("question");
-const scoreContainer = document.getElementById("scoreContainer");
-const scoreText = document.getElementById("score");
-const progressText = document.getElementById("progressText");
-const progressBarFull = document.getElementById("progressBarFull");
-const loader = document.getElementById("loader");
-const game = document.getElementById("game");
-const choicesContainer = document.getElementById("choicesContainer");
+const questionElem = document.querySelector("#question");
+const scoreContainer = document.querySelector("#scoreContainer");
+const scoreText = document.querySelector("#score");
+const progressText = document.querySelector("#progressText");
+const progressBarFull = document.querySelector("#progressBarFull");
+const loader = document.querySelector("#loader");
+const game = document.querySelector("#game");
+const choicesContainer = document.querySelector("#choicesContainer");
 
 let currentQuestion = {};
 let acceptingAnswers = false;
