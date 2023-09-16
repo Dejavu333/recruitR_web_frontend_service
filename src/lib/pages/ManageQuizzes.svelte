@@ -89,5 +89,38 @@
 <!---------------------------------------style--------------------------------------->
 
 <style>
+.add-quiz-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 20rem;
+  height: 5.3rem;
+  margin: 5rem auto;
+  background: var(--color-primary);
+  border: var(--color-primary-light) 0.2rem solid;
+  border-radius: 0rem;
+  padding: 0.4rem;
+}
+
+.columns {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  margin: 1.6rem auto;
+}
+
+.addcategory-button {
+  background-color: var(--color-primary-dark);
+  padding: 0 1rem;
+  height: 2.8rem;
+  width: 10rem;
+  margin-top: 0.6rem;
+}
+.addcategory-button:hover {
+  background-color: var(--color-hightlight);
+}
 
 </style>

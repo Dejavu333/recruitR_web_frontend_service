@@ -1,3 +1,5 @@
+<!---------------------------------------functionality--------------------------------------->
+<!---------------------------------------functionality--------------------------------------->
 <script>
   import Login from './lib/pages/Login.svelte';
   import Register from './lib/pages/Register.svelte';
@@ -11,7 +13,8 @@
   import Navbar from './lib/Navbar.svelte';
   
 </script>
-
+<!---------------------------------------structure--------------------------------------->
+<!---------------------------------------structure--------------------------------------->
 <div id="grid-container">
   <Navbar />
     <main>
@@ -29,8 +32,20 @@
       />  
   </main>
 </div>
-
+<!---------------------------------------style--------------------------------------->
+<!---------------------------------------style--------------------------------------->
 
 <style>
+#grid-container {
+  display: grid;
+  grid-template-columns: 10% 90%; /* 20% for the menu, 80% for the main content */
+  grid-template-rows: 10% 90%; /* 20% for the top row, 80% for the bottom row */
+  grid-template-areas:
+      "navbar main"
+      "navbar main"; 
+}
 
+main {
+  grid-area: main;
+}
 </style>

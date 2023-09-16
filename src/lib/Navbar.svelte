@@ -1,3 +1,8 @@
+<!---------------------------------------functionality--------------------------------------->
+<!---------------------------------------functionality--------------------------------------->
+
+<!---------------------------------------structure--------------------------------------->
+<!---------------------------------------structure--------------------------------------->
 <div class="navbar">
     <div class="logo">
         <img src="mainLogo.png" alt="Logo">
@@ -10,10 +15,11 @@
         <li><a href="/#/settings">settings</a></li>
     </ul>
 </div>
-
+<!---------------------------------------style--------------------------------------->
+<!---------------------------------------style--------------------------------------->
 <style>
 .navbar {
-    width: 10%;
+    grid-area: navbar;
     background-color: var(--color-primary);
     position: fixed;
     top: 0;
@@ -24,23 +30,20 @@
     align-items: center;
     padding: 20px 0;
     z-index: 100;
-    /* right border */
-    border-right: 4px solid var(--color-primary-light);
+    border-right: 4px solid var(--color-black);
 }
 
 .logo img {
     height: 200px;
 }
 
-/* Style the menu items */
 .menu {
     list-style: none;
     margin-top: 20px;
 }
 
 .menu li {
-    border: 2px solid var(--color-primary-light);
-    width: 150px;
+    border: 2px solid var(--color-black);
     height: 50px;
     margin-bottom: 10px;
     display: flex;

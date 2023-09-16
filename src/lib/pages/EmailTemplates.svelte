@@ -68,14 +68,15 @@
     updateFileList();
   });
 </script>
-
+<!---------------------------------------structure--------------------------------------->
+<!---------------------------------------structure--------------------------------------->
 <div id="page-wrapper" class="clearfix">
   <h1>Mails</h1>
   <p>editor for templating</p>
 
   <form action="#" method="POST" id="file-form">
     <div class="field">
-      <input type="text" name="filename" id="filename" placeholder="Filename (e.g. treehouse.txt)">
+      <input type="text" name="filename" id="filename" placeholder="Template name">
     </div>
     <div class="field">
       <textarea name="content" id="content" placeholder="Type your content here..."></textarea>
@@ -91,21 +92,9 @@
     <ul id="file-list"></ul>
   </div>
 </div>
-
-  <style>
-    *, *:before, *:after {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
-html {
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 100%;
-  background: #333;
-  color: #33383D;
-  -webkit-font-smoothing: antialiased;
-}
+<!---------------------------------------style--------------------------------------->
+<!---------------------------------------style--------------------------------------->
+<style>
 
 #page-wrapper {
   width: 960px;
@@ -115,41 +104,6 @@ html {
   min-height: 300px;
   border-top: 5px solid #69c773;
   box-shadow: 0 2px 10px rgba(0,0,0,0.8);
-}
-
-h1 {
-  margin: 0;
-}
-
-h2 {
-  margin-top: 0;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #999;
-}
-
-p {
-  font-size: 0.9rem;
-  margin: 0.5rem 0 1.5rem 0;
-}
-
-a,
-a:visited {
-  color: #08C;
-  text-decoration: none;
-}
-
-a:hover,
-a:focus {
-  color: #69c773;
-  cursor: pointer;
-}
-
-a.delete-file,
-a.delete-file:visited {
-  color: #CC0000;
-  margin-left: 0.5rem;
 }
 
 #file-form {
