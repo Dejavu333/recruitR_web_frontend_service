@@ -38,7 +38,7 @@
 <style>
 #grid-container {
   display: grid;
-  grid-template-columns: 10% 90%; /* 20% for the menu, 80% for the main content */
+  grid-template-columns: 14% 86%; /* 20% for the menu, 80% for the main content */
   grid-template-rows: 10% 90%; /* 20% for the top row, 80% for the bottom row */
   grid-template-areas:
       "navbar main"

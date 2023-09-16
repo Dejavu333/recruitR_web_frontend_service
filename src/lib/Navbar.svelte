@@ -3,52 +3,116 @@
 
 <!---------------------------------------structure--------------------------------------->
 <!---------------------------------------structure--------------------------------------->
-<div class="navbar">
-    <div class="logo">
-        <img src="mainLogo.png" alt="Logo">
+
+
+<div class="contact-form-container navbar">
+    <div class="contact-us">
+        <div class="contact-header">
+            <h1>&#9135;&#9135;&#9135;&#9135;&nbsp;&nbsp;recruitR</h1>
+        </div>
+        <div class="nav-container">
+            <nav>
+                <ul>
+                    <li><a href="/#/managequizzes">quizzes</a></li>
+                    <li><a href="/#/managequizinstances">quiz instances</a></li>
+                    <li><a href="/#/emailtemplates">email templates</a></li>
+                    <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                    <li><a href="/#/login">login/register</a></li>
+                    <li><a href="/#/settings">settings</a></li>
+                </ul>
+            </nav>
+        </div>
     </div>
-    <ul class="menu">
-        <li><a href="/#/managequizzes">quizzes</a></li>
-        <li><a href="/#/managequizinstances">quiz instances</a></li>
-        <li><a href="/#/emailtemplates">email templates</a></li>
-        <li><a href="/#/login">login/register</a></li>
-        <li><a href="/#/settings">settings</a></li>
-    </ul>
 </div>
 <!---------------------------------------style--------------------------------------->
 <!---------------------------------------style--------------------------------------->
 <style>
-.navbar {
+
+
+
+.contact-form-container {
     grid-area: navbar;
-    background-color: var(--color-primary);
     position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 0;
-    z-index: 100;
-    border-right: 4px solid var(--color-black);
+    background: var(--color-white);
+    box-shadow: var(--shadow-primary);
+    border-radius: 2rem 2rem 2rem 2rem;
 }
 
-.logo img {
-    height: 200px;
-}
+        .contact-us {
+            position: relative;
+            min-width: 14vw;
+            height: 98vh;
+            background: var(--color-light);
+            overflow: hidden;
+            border-radius: 2rem 2rem 2rem 2rem;
+            box-shadow: var(--shadow-primary);
+        }
 
-.menu {
-    list-style: none;
-    margin-top: 20px;
-}
+        .contact-us:before {
+            content: "";
+            position: absolute;
+            bottom: -2rem;
+            left: -6rem;
+            height: 15rem;
+            width: 35rem;
+            background: var(--color-secondary);
+            transform: rotate(25deg);
+            box-shadow: 0 0 0.2rem 0.4rem rgba(0, 0, 0, 0.2);
+        }
 
-.menu li {
-    border: 2px solid var(--color-black);
-    height: 50px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .contact-us:after {
+            content: "";
+            position: absolute;
+            bottom: -2rem;
+            right: -10rem;
+            height: 15rem;
+            width: 30rem;
+            background: var(--color-primary);
+            transform: rotate(-25deg);
+            box-shadow: 0 0 0.2rem 0.4rem rgba(0, 0, 0, 0.2);
+        
+        }
+
+        .contact-header {
+            color: white;
+            position: absolute;
+            transform: rotate(-90deg);
+            top: 6rem;
+            left: -5rem;
+        }
+
+        .contact-header h1 {
+            white-space: nowrap;
+            margin-left: 1rem;
+        }
+
+        .nav-container {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+
+        nav ul {
+            text-align: center ;
+            list-style-type: none;
+            width: 100%;
+        }
+
+        nav li {
+            padding: 0.4rem 0;
+            white-space: nowrap;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--color-grey);
+            font-weight: 400;
+        }
+        nav a:hover {
+            color: #000;
+        }
 
 </style>

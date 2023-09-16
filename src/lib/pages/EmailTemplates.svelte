@@ -1,3 +1,5 @@
+<!---------------------------------------functionality--------------------------------------->
+<!---------------------------------------functionality--------------------------------------->
 <script>
   import { onMount } from "svelte";
 
@@ -82,7 +84,7 @@
       <textarea name="content" id="content" placeholder="Type your content here..."></textarea>
     </div>
     <div class="field">
-      <button type="button" on:click={saveFile}>Save Template</button>
+      <button type="button" on:click={saveFile}>save template</button>
       <div id="messages"></div>
     </div>
   </form>
@@ -95,15 +97,18 @@
 <!---------------------------------------style--------------------------------------->
 <!---------------------------------------style--------------------------------------->
 <style>
+h1 {
+  font: 50px/1 "Lobster", cursive;
+  text-shadow: 2px 1px 0 transparent, 5px 4px 0 rgb(187, 214, 103);
+  margin: 0;
+}
 
 #page-wrapper {
   width: 960px;
-  background: #FFF;
-  padding: 1.25rem;
-  margin: 1rem auto;
   min-height: 300px;
-  border-top: 5px solid #69c773;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.8);
+  padding: var(--margin-primary); 
+  background: var(--color-primary);
+  border: var(--border-thickness-primary) solid var(--color-light-primary);
 }
 
 #file-form {
@@ -112,39 +117,17 @@
 }
 
 .field {
-  margin-bottom: 1rem;
+  margin-bottom: var(--margin-primary);
 }
 
 input,
 textarea {
   width: 100%;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #D9D9D9;
-  border-radius: 3px;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+  border: var(--border-thickness-secondary) solid var(--color-light-primary);
 }
 
 textarea {
   min-height: 300px;
-}
-
-button {
-  display: inline-block;
-  border-radius: 3px;
-  border: none;
-  font-size: 0.9rem;
-  padding: 0.6rem 1em;
-  background: #86b32d;
-  border-bottom: 1px solid #5d7d1f;
-  color: white;
-  margin: 0 0.25rem;
-  text-align: center;
-}
-
-button:hover {
-  opacity: 0.75;
-  cursor: pointer;
 }
 
 #files {
@@ -158,10 +141,8 @@ button:hover {
   height: 330px;
   overflow-y: auto;
   list-style: none;
-  background: #F7F7F7;
-  border: 1px solid #D9D9D9;
-  border-radius: 3px;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+  background: var(--color-white);
+  border: var(--border-thickness-secondary) solid var(--color-light-primary);
 }
 
 #files li {

@@ -33,16 +33,22 @@
 <style>
     
 .column {
-  min-width: 8.4rem;
-  margin: 0 0.6rem;
-  background: var(--color-primary);
-  border: var(--color-light-primary) 0.2rem solid;
-  border-radius: 0.2rem;
+  min-width: 9vw;
+  padding-bottom:var(--margin-primary);
+  margin: 0 1rem;
+  background: var(--color-light);
+  border-radius: 2rem;
+  box-shadow: var(--shadow-primary);
+
+
+  -webkit-transition: all 0.3s;
 }
 
 .column-header {
+  height: 4rem;
+  border-radius: 2rem;
   padding: 0.1rem;
-  border-bottom: var(--color-light-primary) 0.2rem solid;
+  box-shadow: var(--shadow-primary);
 }
 .to-do-column .column-header {
   background: var(--color-primary);
@@ -56,8 +62,8 @@
   padding: 0.1rem;
 }
 .addquiz-button {
-  background-color: var(--color-primary-dark);
-  margin: 0.1rem auto 0.6rem auto;
+  background-color: var(--color-primary);
+  margin: 0.6rem auto 0.6rem auto;
 }
 .addquiz-button:hover {
   background-color: var(--color-hightlight);

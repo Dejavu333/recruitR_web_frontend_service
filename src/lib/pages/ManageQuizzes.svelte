@@ -73,8 +73,12 @@
 
 <div class="add-quiz-container">
     <input type="text" maxlength="12" id="columnTitleInp" placeholder="new category..." onkeydown="if (event.keyCode == 13)
-                            document.getElementById('add').click()">
+    document.getElementById('add').click()"> 
     <button id="add" class="button addcategory-button" on:click={addColumn}>add category</button>
+    <input type="text" maxlength="12" id="columnTitleInp" placeholder="search category..." onkeydown="if (event.keyCode == 13)
+                            document.getElementById('add').click()">
+    <input type="text" maxlength="12" id="columnTitleInp" placeholder="search quiz..." onkeydown="if (event.keyCode == 13)
+                            document.getElementById('add').click()">
 </div>
 
 <div class="main-container">
@@ -90,16 +94,25 @@
 
 <style>
 .add-quiz-container {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  width: 20rem;
-  height: 5.3rem;
-  margin: 5rem auto;
-  background: var(--color-primary);
-  border: var(--color-primary-light) 0.2rem solid;
-  border-radius: 0rem;
+  width: fit-content;
+  height: 9vw;
+  margin: 2rem auto;
+  background: var(--color-light);
+  border-radius: 2rem;
   padding: 0.4rem;
+  box-shadow: var(--shadow-primary);
+}
+
+input {
+  padding: 0 1rem;
+  height: 1rem;
+  width: 11vw;
+  margin: auto 0.6rem auto 0.6rem;
+  border-radius: 2rem;
+  padding: 0.4rem;
+  box-shadow: var(--shadow-primary);
+  border: none;
 }
 
 .columns {
@@ -109,16 +122,19 @@
   -webkit-box-align: start;
   -ms-flex-align: start;
   align-items: flex-start;
-  margin: 1.6rem auto;
 }
 
 .addcategory-button {
-  background-color: var(--color-primary-dark);
   padding: 0 1rem;
-  height: 2.8rem;
-  width: 10rem;
-  margin-top: 0.6rem;
+  height: 4rem;
+  width: 11vw;
+  margin: auto 0.6rem auto 0.6rem;
+  border-radius: 2rem;
+  background: var(--color-secondary);
+  padding: 0.4rem;
+  box-shadow: var(--shadow-primary);
 }
+
 .addcategory-button:hover {
   background-color: var(--color-hightlight);
 }
