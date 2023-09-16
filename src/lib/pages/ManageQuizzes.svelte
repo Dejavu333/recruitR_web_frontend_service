@@ -1,21 +1,44 @@
+<!---------------------------------------functionality--------------------------------------->
+<!---------------------------------------functionality--------------------------------------->
 <script>
     import { onMount } from "svelte";
     import QuizColumn from "../QuizColumn.svelte";
     import dragula from "dragula";
 
-    let columns = ["testTitle", "testTitlee", "testTitleee"];
-
+    // variables, constants
+    //====================================================================================================
+    const columns = ["testTitle", "testTitlee", "testTitleee"];
+    const errorMessages = {
+        emptyError: "cannot be empty",
+        duplicateError: "already exists"
+    }
     let dragulaInstance; // Define a variable to hold the Dragula instance.
+    let columnTitleInp;
 
+    // setup
+    //====================================================================================================
     onMount(() => {
         // Initialize Dragula initially.
         dragulaInstance = configurate();
+        columnTitleInp = document.getElementById("columnTitleInp")
+        columnTitleInp.addEventListener("focus", function () {
+            columnTitleInp.value = "";
+        });
     });
 
+    // functions
+    //====================================================================================================
     function addColumn() {
-        const columnTitleInp = document.getElementById("columnTitleInp")
-        let columnTitle = columnTitleInp.value;
-        if (columnTitle == "") return;
+        const existingColumnTitles = columns.map(c => c.toLowerCase());
+        const columnTitle = columnTitleInp.value;
+        if (columnTitle == "" || columnTitle == errorMessages.emptyError) {
+            columnTitleInp.value = errorMessages.emptyError;
+            return;
+        }
+        if (existingColumnTitles.includes(columnTitle.toLowerCase()) || columnTitle == errorMessages.duplicateError) {
+            columnTitleInp.value = errorMessages.duplicateError;
+            return;
+        }
         columns.push(columnTitle);
 
         const quizColumn = new QuizColumn({
@@ -43,7 +66,8 @@
     }
 </script>
 
-
+<!---------------------------------------structure--------------------------------------->
+<!---------------------------------------structure--------------------------------------->
 
 <h1>quizzes </h1>
 
@@ -60,3 +84,10 @@
         <QuizColumn columnTitle="testTitleee" />
     </ul>
 </div>
+
+<!---------------------------------------style--------------------------------------->
+<!---------------------------------------style--------------------------------------->
+
+<style>
+
+</style>

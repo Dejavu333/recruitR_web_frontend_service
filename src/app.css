@@ -19,27 +19,21 @@
   grid-template-rows: 10% 90%; /* 20% for the top row, 80% for the bottom row */
   grid-template-areas:
       "navbar main"
-      "navbar main"; /* Repeat to match the rows */
+      "navbar main"; 
 }
 
 main {
-  grid-area: main !important;
-  .main-content {
-    flex: 1; /* Allow the content to grow and take up available space */
-    overflow-y: auto; /* Enable vertical scrolling when content overflows */
-    max-height: 100%; /* Enforce a maximum height for the content */
-  }
-  
+  grid-area: main;
 }
 
 .navbar {
-  grid-area: navbar !important;
+  grid-area: navbar;
   background: var(--color-primary);
 }
 
 h1,
 h4 {
-  line-height: 1.3;
+    text-align: center;
 }
 
 span {
