@@ -11,10 +11,20 @@
   import ManageQuizInstances from './lib/pages/ManageQuizInstances.svelte';
   import Router from 'svelte-spa-router';
   import Navbar from './lib/Navbar.svelte';
+
+  let loggedIn = false;
+  const jwt = document.cookie.split(';').find(c => c.trim().startsWith('jwt='));
+  if (jwt) {
+    loggedIn = true;
+  }
   
 </script>
 <!---------------------------------------structure--------------------------------------->
 <!---------------------------------------structure--------------------------------------->
+{#if !loggedIn}
+   <p>You must be logged in to view this page.</p>
+   <Login />
+{:else}
 <div id="grid-container">
   <Navbar />
     <main>
@@ -32,6 +42,7 @@
       />  
   </main>
 </div>
+{/if}
 <!---------------------------------------style--------------------------------------->
 <!---------------------------------------style--------------------------------------->
 

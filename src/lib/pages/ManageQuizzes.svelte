@@ -96,25 +96,13 @@
 .add-quiz-container {
   display: flex;
   width: fit-content;
-  height: 9vw;
+  height: fit-content;
   margin: 2rem auto;
   background: var(--color-light);
   border-radius: 2rem;
   padding: 0.4rem;
   box-shadow: var(--shadow-primary);
 }
-
-input {
-  padding: 0 1rem;
-  height: 1rem;
-  width: 11vw;
-  margin: auto 0.6rem auto 0.6rem;
-  border-radius: 2rem;
-  padding: 0.4rem;
-  box-shadow: var(--shadow-primary);
-  border: none;
-}
-
 .columns {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -128,7 +116,6 @@ input {
   padding: 0 1rem;
   height: 4rem;
   width: 11vw;
-  margin: auto 0.6rem auto 0.6rem;
   border-radius: 2rem;
   background: var(--color-secondary);
   padding: 0.4rem;

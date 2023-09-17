@@ -53,6 +53,16 @@ a:hover {
   background: #ff4444;
 } */
 
+input {
+  padding: 0 1rem;
+  height: 1rem;
+  width: 11vw;
+  margin: var(--margin-primary);
+  border-radius: 2rem;
+  padding: 0.4rem;
+  box-shadow: var(--shadow-primary);
+  border: none;
+}
 
 ul {
   list-style-type: none;
@@ -71,7 +81,12 @@ button {
   color: var(--color-black);
   padding: var(--margin-primary);
   margin-bottom: var(--margin-primary);
+  background-color: var(--color-primary);
   cursor: pointer;
+}
+
+button:hover {
+  background-color: var(--color-hightlight);
 }
 
 /* Dragula styles */
