@@ -2,9 +2,11 @@
 <!---------------------------------------functionality--------------------------------------->
 <script>
 import { isEmail } from 'validator';
+import Config from '../Config';
 
 let email = '';
 let password = '';
+const authNRoute = Config.CURATOR_SERVICE_URL + Config.AUTHN_ROUTE;
 
 async function login() {
     //syntactic validation
@@ -17,7 +19,7 @@ async function login() {
         return;
     }
     //send request
-    const response = await fetch('/api/login', {
+    const response = await fetch(authNRoute, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -27,8 +29,10 @@ async function login() {
     //handle response
     if (response.ok) {
       const data = await response.json();
+      console.log(data);
       document.cookie = `jwt=${data.token}; path=/`; // Store the JWT in a cookie
     } else {
+      console.log(response);
       alert(`Login failed. ${response.status} ${response.statusText}`);
     }
 }
