@@ -9,7 +9,7 @@
         const quizCarousel = new QuizCarousel({
             target: document.getElementById(columnTitle),
             props: {
-                carouselTitle: "frominput"
+                carouselTitle: "untitled"
             }
         });
     }
@@ -17,7 +17,7 @@
 
 <!---------------------------------------structure--------------------------------------->
 <!---------------------------------------structure--------------------------------------->
-<li class="column to-do-column">
+<li class="column to-do-column" >
     <div class="column-header">
         <h4>{columnTitle}</h4>
     </div>
@@ -33,15 +33,13 @@
 <style>
     
 .column {
-  min-width: 9vw;
+  width: fit-content;
+  min-width: 13vw;
+  margin: 1rem;
   padding-bottom:var(--margin-primary);
-  margin: 0 1rem;
   background: var(--color-light);
   border-radius: 2rem;
   box-shadow: var(--shadow-primary);
-
-
-  -webkit-transition: all 0.3s;
 }
 
 .column-header {

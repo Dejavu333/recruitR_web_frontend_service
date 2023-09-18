@@ -14,6 +14,7 @@
     "vite": "^4.3.2"
   },
   "dependencies": {
+    "cupevents": "^1.0.1",
     "dragula": "^3.7.3",
     "express-validator": "^7.0.1",
     "svelte-spa-router": "^3.3.0"

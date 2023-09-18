@@ -4,6 +4,8 @@
     import { onMount } from "svelte";
     import QuizColumn from "../QuizColumn.svelte";
     import dragula from "dragula";
+    import { onEvent } from "cupevents";
+    import QuizEditor from "./QuizEditor.svelte";
 
     // variables, constants
     //====================================================================================================
@@ -14,18 +16,26 @@
     }
     let dragulaInstance; // Define a variable to hold the Dragula instance.
     let columnTitleInp;
+    let isQuizEditorOpen = false;
 
     // setup
     //====================================================================================================
     onMount(() => {
         // Initialize Dragula initially.
-        dragulaInstance = configurate();
+        dragulaInstance = configurateDragula();
         columnTitleInp = document.getElementById("columnTitleInp")
         columnTitleInp.addEventListener("focus", function () {
             columnTitleInp.value = "";
         });
-    });
 
+    });
+    
+    onEvent("openQuizEditor", function (e) {
+        isQuizEditorOpen = true;
+    });
+    onEvent("closeQuizEditor", function (e) {
+        isQuizEditorOpen = false;
+    });
     // functions
     //====================================================================================================
     function addColumn() {
@@ -51,19 +61,58 @@
 
         // Destroy the previous Dragula instance and create a new one.
         dragulaInstance.destroy();
-        dragulaInstance = configurate();
+        dragulaInstance = configurateDragula();
     }
     
-    function configurate() {
+    function configurateDragula() {
         const columnsDOMRepres = [];
         columns.forEach(c => {
             columnsDOMRepres.push(document.getElementById(c));
         });
         const dragulaInstance = dragula([...columnsDOMRepres]);
-        // You can add any additional event listeners or configurations here.
-        // For example, you can add the `removeOnSpill: true` option if needed.
+        // add any additional event listeners or configurations here.
+        // add the `removeOnSpill: true` option if needed.
         return dragulaInstance;
     }
+
+    function searchCategory() {
+    const searchValue = document.querySelector("#searchCategoryInp").value.toLowerCase();
+    const columnsDOMRepres = document.querySelectorAll(".column");
+
+    columnsDOMRepres.forEach(c => {
+        const ulElement = c.querySelector("ul");
+        if (ulElement) {
+            const ulId = ulElement.id.toLowerCase();
+            if (searchValue === "") {
+                c.style.display = "block";
+            }
+            else if (ulId.includes(searchValue)) {
+                c.style.display = "block";
+            } 
+            else {
+                c.style.display = "none";
+            }
+        }
+    });
+}
+
+function searchQuiz() {
+    const searchValue = document.querySelector("#searchQuizInp").value.toLowerCase();
+    const quizDOMRepres = document.querySelectorAll(".quiz");
+    quizDOMRepres.forEach(q => {
+        const quizTitle = q.querySelector("p").innerText.toLowerCase();
+        if (searchValue === "") {
+            q.style.display = "flex";
+        }
+        else if (quizTitle.includes(searchValue)) {
+            q.style.display = "flex";
+        } 
+        else {
+            q.style.display = "none";
+        }
+    });
+    
+}
 </script>
 
 <!---------------------------------------structure--------------------------------------->
@@ -71,14 +120,17 @@
 
 <h1>quizzes </h1>
 
+<QuizEditor isOpen={isQuizEditorOpen} />
+
 <div class="add-quiz-container">
     <input type="text" maxlength="12" id="columnTitleInp" placeholder="new category..." onkeydown="if (event.keyCode == 13)
-    document.getElementById('add').click()"> 
+        document.getElementById('add').click()"> 
     <button id="add" class="button addcategory-button" on:click={addColumn}>add category</button>
-    <input type="text" maxlength="12" id="columnTitleInp" placeholder="search category..." onkeydown="if (event.keyCode == 13)
-                            document.getElementById('add').click()">
-    <input type="text" maxlength="12" id="columnTitleInp" placeholder="search quiz..." onkeydown="if (event.keyCode == 13)
-                            document.getElementById('add').click()">
+
+    <input type="text" maxlength="12" id="searchCategoryInp" on:input={searchCategory} placeholder="search category..." onkeydown="if (event.keyCode == 13)
+        document.getElementById('add').click()">
+    <input type="text" maxlength="12" id="searchQuizInp" on:input={searchQuiz} placeholder="search quiz..." onkeydown="if (event.keyCode == 13)
+        document.getElementById('add').click()">
 </div>
 
 <div class="main-container">
@@ -97,7 +149,7 @@
   display: flex;
   width: fit-content;
   height: fit-content;
-  margin: 2rem auto;
+  margin: 1rem auto;
   background: var(--color-light);
   border-radius: 2rem;
   padding: 0.4rem;

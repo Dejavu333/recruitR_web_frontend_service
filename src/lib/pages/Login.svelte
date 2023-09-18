@@ -2,7 +2,7 @@
 <!---------------------------------------functionality--------------------------------------->
 <script>
 import { isEmail } from 'validator';
-import Config from '../Config';
+import Config from '../../Config';
 
 let email = '';
 let password = '';
@@ -18,22 +18,26 @@ async function login() {
         alert('Password must be at least 8 characters long.');
         return;
     }
-    //send request
-    const response = await fetch(authNRoute, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
-    //handle response
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
+    try {
+      //send request
+      const response = await fetch(authNRoute, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      //handle response
+      const data = await response.json(); 
+      if (data.errcode!=undefined) {
+          alert(data.errcode + ' ' + data.detail);
+          return;
+      }
       document.cookie = `jwt=${data.token}; path=/`; // Store the JWT in a cookie
-    } else {
-      console.log(response);
-      alert(`Login failed. ${response.status} ${response.statusText}`);
+      window.location = '/#/managequizzes'; // Redirect to the home page
+
+    } catch (err) {
+      console.log("Error: ", err);
     }
 }
 </script>

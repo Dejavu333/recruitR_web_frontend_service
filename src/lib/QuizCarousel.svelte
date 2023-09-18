@@ -1,5 +1,6 @@
 <script>
   import { fade, scale } from "svelte/transition";
+  import {onEvent, broadcastEvent} from "cupevents";
   export let carouselTitle;
   let showOptions = false;
 
@@ -13,14 +14,30 @@
     showOptions = !showOptions;
   }
 
-  // Function to hide options when clicking somewhere else on the page
   function hideOptions(event) {
     showOptions = false;
   }
 
+  function openQuizEditor() {
+    broadcastEvent("openQuizEditor");
+  }
+
   // Add a global event listener for clicks
-  document.addEventListener('click', hideOptions);
+  onEvent("click", hideOptions);
 </script>
+
+
+<li class="quiz" on:dblclick={toggleOptions}>
+  {#if showOptions}
+    <div in:scale out:fade class="options">
+      <div on:click={openQuizEditor}>E</div>
+      <div style="margin-left: 0.5rem;">I</div>
+      <div>X</div>
+    </div>
+  {/if}
+  <p>{carouselTitle}</p>
+</li>
+
 
 <style>
   .quiz {
@@ -32,13 +49,14 @@
     background: var(--color-white);
     transition: all 0.3s;
     margin: 1rem;
-    height: 4rem;
-    width: 11vw;
+    min-height: 4rem;
+    min-width: 10vw;
     cursor: move;
     text-align: center;
     box-shadow: var(--shadow-primary);
     border-radius: 2rem;
   }
+
 
   .options {
     position: absolute;
@@ -58,15 +76,8 @@
     border-radius: 10rem;
     background-color: var(--color-secondary);
   }
-</style>
 
-<li class="quiz" on:dblclick={toggleOptions}>
-  {#if showOptions}
-    <div in:scale out:fade class="options">
-      <div>E</div>
-      <div style="margin-left: 0.5rem;">I</div>
-      <div>X</div>
-    </div>
-  {/if}
-  <p>{carouselTitle}</p>
-</li>
+  .options > div:hover {
+    background-color: var(--color-hightlight);
+  }
+</style>
