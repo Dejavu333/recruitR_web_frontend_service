@@ -1,8 +1,13 @@
 <script>
   import { fade, scale } from "svelte/transition";
   import {onEvent, broadcastEvent} from "cupevents";
+    import { onMount } from "svelte";
   export let carouselTitle;
   let showOptions = false;
+
+  onMount( () => {
+    console.log("onMount in QuizCarousel");
+  })
 
   function toggleOptions() {
     try {

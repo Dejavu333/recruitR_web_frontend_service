@@ -1,16 +1,30 @@
 <!---------------------------------------functionality--------------------------------------->
 <!---------------------------------------functionality--------------------------------------->
 <script>
+    import { onMount } from "svelte";
+    import { QuizDTO, quizzesStore } from "../Store";
     import QuizCarousel from "./QuizCarousel.svelte";
 
     export let columnTitle;
+    console.log("store in column:"+$quizzesStore);
+    $: quizzesOfThisColumn = $quizzesStore.filter(q => q.columnNameItBelongsTo == columnTitle);
+
+    onMount(() => {
+    console.log("onMount in QuizColumn");
+    });
+
 
     function addQuizCarousel() {
-        const quizCarousel = new QuizCarousel({
-            target: document.getElementById(columnTitle),
-            props: {
-                carouselTitle: "untitled"
-            }
+        // // const quizCarousel = new QuizCarousel({
+        // //     target: document.getElementById(columnTitle),
+        // //     props: {
+        // //         carouselTitle: "untitled"
+        // //     }
+        // // });
+        console.log(quizzesOfThisColumn);
+        quizzesStore.update(store => {
+            store.push(new QuizDTO(columnTitle));
+            return store;
         });
     }
 </script>
@@ -25,7 +39,9 @@
         <button class="button addquiz-button" on:click={addQuizCarousel}>+</button>
     </div>
     <ul class="quiz-list" id="{columnTitle}">
-        <!-- generated -->
+        {#each quizzesOfThisColumn as quiz}
+          <QuizCarousel carouselTitle={quiz.title} />
+        {/each}
     </ul>
 </li>
 <!---------------------------------------style--------------------------------------->

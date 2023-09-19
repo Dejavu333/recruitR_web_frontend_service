@@ -1,81 +1,86 @@
 <!---------------------------------------functionality--------------------------------------->
 <!---------------------------------------functionality--------------------------------------->
 <script>
-    import { onMount } from "svelte";
-    import QuizColumn from "../QuizColumn.svelte";
-    import dragula from "dragula";
-    import { onEvent } from "cupevents";
-    import QuizEditor from "./QuizEditor.svelte";
+import { onMount } from "svelte";
+import QuizColumn from "../QuizColumn.svelte";
+import QuizEditor from "./QuizEditor.svelte";
+import { QuizDTO, QuizQuestionDTO, quizzesStore } from "../../Store";
+import dragula from "dragula";
+import { onEvent } from "cupevents";
 
-    // variables, constants
-    //====================================================================================================
-    const columns = ["testTitle", "testTitlee", "testTitleee"];
-    const errorMessages = {
-        emptyError: "cannot be empty",
-        duplicateError: "already exists"
-    }
-    let dragulaInstance; // Define a variable to hold the Dragula instance.
-    let columnTitleInp;
-    let isQuizEditorOpen = false;
+// variables, constants
+//====================================================================================================
+const columnTitles = ["test", "asdasd", "abcabcabc"];
+const errorMessages = {
+    emptyError: "cannot be empty",
+    duplicateError: "already exists"
+}
+let dragulaInstanceForQuizzes; // Define a variable to hold the Dragula instance.
+let isQuizEditorOpen = false; //todo maybe move to inner component
+let columnTitleInp;
 
-    // setup
-    //====================================================================================================
-    onMount(() => {
-        // Initialize Dragula initially.
-        dragulaInstance = configurateDragula();
-        columnTitleInp = document.getElementById("columnTitleInp")
-        columnTitleInp.addEventListener("focus", function () {
-            columnTitleInp.value = "";
-        });
-
-    });
-    
-    onEvent("openQuizEditor", function (e) {
-        isQuizEditorOpen = true;
-    });
-    onEvent("closeQuizEditor", function (e) {
-        isQuizEditorOpen = false;
-    });
-    // functions
-    //====================================================================================================
-    function addColumn() {
-        const existingColumnTitles = columns.map(c => c.toLowerCase());
-        const columnTitle = columnTitleInp.value;
-        if (columnTitle == "" || columnTitle == errorMessages.emptyError) {
-            columnTitleInp.value = errorMessages.emptyError;
-            return;
-        }
-        if (existingColumnTitles.includes(columnTitle.toLowerCase()) || columnTitle == errorMessages.duplicateError) {
-            columnTitleInp.value = errorMessages.duplicateError;
-            return;
-        }
-        columns.push(columnTitle);
-
-        const quizColumn = new QuizColumn({
-            target: document.querySelector(".columns"),
-            props: {
-                columnTitle: columnTitle
-            }
-        });
+// setup
+//====================================================================================================
+//todo fetch quizzes from server
+quizzesStore.update(store => { store.push(new QuizDTO("test", "test", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
+// // console.log("quizzesStore in managequiz:"+$quizzesStore);
+onMount(() => {
+    console.log("onMount in ManageQuizzes");
+    // Initialize Dragula initially.
+    dragulaInstanceForQuizzes = configurateDragula();
+    columnTitleInp = document.getElementById("columnTitleInp")
+    columnTitleInp.addEventListener("focus", function () {
         columnTitleInp.value = "";
+    });
 
-        // Destroy the previous Dragula instance and create a new one.
-        dragulaInstance.destroy();
-        dragulaInstance = configurateDragula();
-    }
-    
-    function configurateDragula() {
-        const columnsDOMRepres = [];
-        columns.forEach(c => {
-            columnsDOMRepres.push(document.getElementById(c));
-        });
-        const dragulaInstance = dragula([...columnsDOMRepres]);
-        // add any additional event listeners or configurations here.
-        // add the `removeOnSpill: true` option if needed.
-        return dragulaInstance;
-    }
+});
 
-    function searchCategory() {
+onEvent("openQuizEditor", function (e) {
+    isQuizEditorOpen = true;
+});
+onEvent("closeQuizEditor", function (e) {
+    isQuizEditorOpen = false;
+});
+// functions
+//====================================================================================================
+function addColumn() {
+    const existingColumnTitles = columnTitles.map(c => c.toLowerCase());
+    const columnTitle = columnTitleInp.value;
+    if (columnTitle == "" || columnTitle == errorMessages.emptyError) {
+        columnTitleInp.value = errorMessages.emptyError;
+        return;
+    }
+    if (existingColumnTitles.includes(columnTitle.toLowerCase()) || columnTitle == errorMessages.duplicateError) {
+        columnTitleInp.value = errorMessages.duplicateError;
+        return;
+    }
+    columnTitles.push(columnTitle);
+
+    const quizColumn = new QuizColumn({
+        target: document.querySelector(".columns"),
+        props: {
+            columnTitle: columnTitle
+        }
+    });
+    columnTitleInp.value = "";
+
+    // Destroy the previous Dragula instance and create a new one.
+    dragulaInstanceForQuizzes.destroy();
+    dragulaInstanceForQuizzes = configurateDragula();
+}
+
+function configurateDragula() {
+    const columnsDOMRepres = [];
+    columnTitles.forEach(c => {
+        columnsDOMRepres.push(document.getElementById(c));
+    });
+    const dragulaInstanceForQuizzes = dragula([...columnsDOMRepres]);
+    // add any additional event listeners or configurations here.
+    // add the `removeOnSpill: true` option if needed.
+    return dragulaInstanceForQuizzes;
+}
+
+function searchCategory() {
     const searchValue = document.querySelector("#searchCategoryInp").value.toLowerCase();
     const columnsDOMRepres = document.querySelectorAll(".column");
 
@@ -117,7 +122,7 @@ function searchQuiz() {
 
 <!---------------------------------------structure--------------------------------------->
 <!---------------------------------------structure--------------------------------------->
-
+<h1>{$quizzesStore[$quizzesStore.length-1]}</h1>
 <h1>quizzes </h1>
 
 <QuizEditor isOpen={isQuizEditorOpen} />
@@ -135,9 +140,9 @@ function searchQuiz() {
 
 <div class="main-container">
     <ul class="columns">
-        <QuizColumn columnTitle="testTitle" />  
-        <QuizColumn columnTitle="testTitlee" />
-        <QuizColumn columnTitle="testTitleee" />
+        {#each columnTitles as columnTitle}
+        <QuizColumn columnTitle={columnTitle} />
+        {/each}
     </ul>
 </div>
 
