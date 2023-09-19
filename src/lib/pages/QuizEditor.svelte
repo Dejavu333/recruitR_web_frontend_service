@@ -5,6 +5,7 @@
     import { onMount } from "svelte";
     import { fade, scale } from "svelte/transition";
     import QuizQuestionEditor from "./QuizQuestionEditor.svelte";
+
     export let isOpen = false;
 
     class QuizQuestion {
@@ -25,16 +26,8 @@
     let dragulaInstanceForQuizQuestions;
 
     onMount(() => {
-        // dragulaInstance.destroy();
+        dragulaInstanceForQuizQuestions?.destroy();
         dragulaInstanceForQuizQuestions = configurateDragulForQuizQuestions();
-        dragulaInstanceForQuizQuestions.on('dragend', () => {
-            //update spans with indecies
-            const questionsList = document.querySelector("#questions-list");
-            const questionSpans = questionsList.querySelectorAll("span");
-            questionSpans.forEach((span, index) => {
-                span.innerText = index + 1 + ".";
-            });
-        });
     });
 
     // function updateQuestionNames() {
@@ -47,11 +40,28 @@
         }
         return questionName;
     }
+    $: isOpen && configurateDragulForQuizQuestions();
 
     function configurateDragulForQuizQuestions() {
-        const dragulaInstanceForQuizQuestions = dragula([...[document.querySelector("#questions-list")]]);
-        return dragulaInstanceForQuizQuestions;
+        console.log("configurateDragulForQuizQuestions");
+        if (isOpen) {
+            // Configure dragula instance only when isOpen is true
+            setTimeout(() => {
+                console.log("list:" + document.querySelector("#questions-list"));
+                dragulaInstanceForQuizQuestions = dragula([document.querySelector("#questions-list")]);
+                dragulaInstanceForQuizQuestions.on('dragend', () => {
+                    //update spans with indecies
+                    const questionsList = document.querySelector("#questions-list");
+                    const questionSpans = questionsList.querySelectorAll("span");
+                    questionSpans.forEach((span, index) => {
+                        span.innerText = index + 1 + ".";
+                    });
+                });
+            }, 100);
+        }
     }
+
+    $: console.log("isOpen", isOpen);
 
     function closeQuizEditor() {
         broadcastEvent("closeQuizEditor");
@@ -62,9 +72,12 @@
         selectedQuizQuestion = new QuizQuestion("question " + (questionIndex + 1), ["option 1", "option 2", "option 3"], false, [0]); //todo array must contain indecies of correct answers
     }
 
-    $: addQuizQuestion = () => {
+    function addQuizQuestion() {
         questions = [...questions, new QuizQuestion("asdasdasddddd" + (questions.length + 1), ["option 1", "option 2", "option 3"], false, [0])];
     }
+
+    // $: configurateDragulForQuizQuestions();
+    // $: addQuizQuestion();
 
 </script>
   
