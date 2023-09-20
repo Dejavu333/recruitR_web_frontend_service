@@ -3,12 +3,13 @@ import {writable } from "svelte/store";
 const quizzesStore = writable([]);
 
 class QuizDTO {
-    title = "untitled"
-    columnNameItBelongsTo = "";
-    quizQuestions = [];
-    isOrdered = false;
-    timeLimit = 600;
-    constructor(columnNameItBelongsTo, title, quizQuestions, isOrdered, timeLimit) {
+    title;
+    columnNameItBelongsTo;
+    indexInColumn;
+    quizQuestions;
+    isOrdered;
+    timeLimit;
+    constructor(columnNameItBelongsTo="", indexInColumn=-1, title="untitled", quizQuestions=[], isOrdered=false, timeLimit=600) {
         this.title = title;
         this.columnNameItBelongsTo = columnNameItBelongsTo;
         this.quizQuestions = quizQuestions;

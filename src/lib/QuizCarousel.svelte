@@ -1,8 +1,11 @@
 <script>
-  import { fade, scale } from "svelte/transition";
+  import { fade, fly, scale } from "svelte/transition";
   import {onEvent, broadcastEvent} from "cupevents";
-    import { onMount } from "svelte";
-  export let carouselTitle;
+  import { QuizDTO, quizzesStore } from "../Store";
+  import { onMount } from "svelte";
+    import { flip } from "svelte/animate";
+  export let quizTitle;
+
   let showOptions = false;
 
   onMount( () => {
@@ -27,20 +30,32 @@
     broadcastEvent("openQuizEditor");
   }
 
+  function deleteQuiz() {
+    console.log("deleteQuiz");
+    quizzesStore.update(store => {
+      store.splice(store.findIndex(q => q.title == quizTitle), 1);
+      return store;
+    });
+  }
+
+  function deployQuiz() {
+    console.log("deployQuiz");
+  }
+
   // Add a global event listener for clicks
   onEvent("click", hideOptions);
 </script>
 
 
-<li class="quiz" on:dblclick={toggleOptions}>
+<li class="quiz" on:dblclick={toggleOptions} in:scale>
   {#if showOptions}
     <div in:scale out:fade class="options">
       <div on:click={openQuizEditor}>E</div>
-      <div style="margin-left: 0.5rem;">I</div>
-      <div>X</div>
+      <div on:click={deployQuiz} style="margin-left: 0.5rem;">I</div>
+      <div on:click={deleteQuiz}>X</div>
     </div>
   {/if}
-  <p>{carouselTitle}</p>
+  <p>{quizTitle}</p>
 </li>
 
 

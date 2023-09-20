@@ -7,22 +7,33 @@
 
     export let columnTitle;
     console.log("store in column:"+$quizzesStore);
-    $: quizzesOfThisColumn = $quizzesStore.filter(q => q.columnNameItBelongsTo == columnTitle);
+    let quizzesOfThisColumn;
+    $: {quizzesOfThisColumn = $quizzesStore.filter(q => q.columnNameItBelongsTo == columnTitle); console.log("dfd",quizzesOfThisColumn);}
 
     onMount(() => {
     console.log("onMount in QuizColumn");
     });
 
 
-    function addQuizCarousel() {
-        // // const quizCarousel = new QuizCarousel({
-        // //     target: document.getElementById(columnTitle),
-        // //     props: {
-        // //         carouselTitle: "untitled"
-        // //     }
-        // // });
-        console.log(quizzesOfThisColumn);
+    function addQuizCarouselSkeleton() {
+      // // const quizCarousel = new QuizCarousel({
+      // //     target: document.getElementById(columnTitle),
+      // //     props: {
+      // //         carouselTitle: "untitled"
+      // //     }
+      // // });
+      // console.log(quizzesOfThisColumn);
         quizzesStore.update(store => {
+            if (store.find(q => q.title == "untitled")) {
+                console.log("found untitled");
+                let i = 1;
+                while (store.find(q => q.title == "untitled" + i)) {
+                    i++;
+                }
+                store.push(new QuizDTO(columnTitle,0, "untitled" + i));
+                return store;
+            }
+
             store.push(new QuizDTO(columnTitle));
             return store;
         });
@@ -31,16 +42,16 @@
 
 <!---------------------------------------structure--------------------------------------->
 <!---------------------------------------structure--------------------------------------->
-<li class="column to-do-column" >
+<li class="column default-quiz-column" >
     <div class="column-header">
         <h4>{columnTitle}</h4>
     </div>
     <div class="column-button">
-        <button class="button addquiz-button" on:click={addQuizCarousel}>+</button>
+        <button class="button addquiz-button" on:click={addQuizCarouselSkeleton}>+</button>
     </div>
     <ul class="quiz-list" id="{columnTitle}">
         {#each quizzesOfThisColumn as quiz}
-          <QuizCarousel carouselTitle={quiz.title} />
+          <QuizCarousel quizTitle={quiz.title} />
         {/each}
     </ul>
 </li>
@@ -64,7 +75,7 @@
   padding: 0.1rem;
   box-shadow: var(--shadow-primary);
 }
-.to-do-column .column-header {
+.default-quiz-column .column-header {
   background: var(--color-primary);
 }
 .quiz-list {
