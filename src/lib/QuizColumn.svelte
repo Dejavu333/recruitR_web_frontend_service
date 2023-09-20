@@ -8,7 +8,7 @@
     export let columnTitle;
     console.log("store in column:"+$quizzesStore);
     let quizzesOfThisColumn;
-    $: {quizzesOfThisColumn = $quizzesStore.filter(q => q.columnNameItBelongsTo == columnTitle); console.log("dfd",quizzesOfThisColumn);}
+    $: {quizzesOfThisColumn = $quizzesStore.filter(q => q.columnNameItBelongsTo == columnTitle); console.log("quizzesInThisColumnUpdated",quizzesOfThisColumn);}
 
     onMount(() => {
     console.log("onMount in QuizColumn");
@@ -30,7 +30,7 @@
                 while (store.find(q => q.title == "untitled" + i)) {
                     i++;
                 }
-                store.push(new QuizDTO(columnTitle,0, "untitled" + i));
+                store.push(new QuizDTO(columnTitle, 0, "untitled" + i));
                 return store;
             }
 

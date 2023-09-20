@@ -27,7 +27,7 @@ quizzesStore.update(store => { store.push(new QuizDTO("test",0, "test", [new Qui
 onMount(() => {
     console.log("onMount in ManageQuizzes");
     // Initialize Dragula initially.
-    dragulaInstanceForQuizzes = configurateDragula();
+    dragulaInstanceForQuizzes = configurateDragulaForQuizColumns();
     columnTitleInp = document.getElementById("columnTitleInp")
     columnTitleInp.addEventListener("focus", function () {
         columnTitleInp.value = "";
@@ -66,10 +66,10 @@ function addColumn() {
 
     // Destroy the previous Dragula instance and create a new one.
     dragulaInstanceForQuizzes.destroy();
-    dragulaInstanceForQuizzes = configurateDragula();
+    dragulaInstanceForQuizzes = configurateDragulaForQuizColumns();
 }
 
-function configurateDragula() {
+function configurateDragulaForQuizColumns() {
     const columnsDOMRepres = [];
     columnTitles.forEach(c => {
         columnsDOMRepres.push(document.getElementById(c));
@@ -79,46 +79,29 @@ function configurateDragula() {
     // add the `removeOnSpill: true` option if needed.
     //on dragend adds column name to quiz
     dragulaInstanceForQuizzes.on("drop", function (el, target, source, sibling) {
-    // class QuizDTO {
-    // title;
-    // columnNameItBelongsTo;
-    // indexInColumn;
-    // quizQuestions;
-    // isOrdered;
-    // timeLimit;
-    // constructor(columnNameItBelongsTo="", indexInColumn=-1, title="untitled", quizQuestions=[], isOrdered=false, timeLimit=600) {
-    //     this.title = title;
-    //     this.columnNameItBelongsTo = columnNameItBelongsTo;
-    //     this.quizQuestions = quizQuestions;
-    //     this.isOrdered = isOrdered;
-    //     this.timeLimit = timeLimit;
-    // }
-    // }
-    //update quiz columnNameItBelongsTo and indexInColumn
-        const quizTitle = el.innerText;
-        setTimeout(() => {
-            //every quiz in every column updates its columnnameitbelongsto and indexincolumn
-            const columnsDOMRepres = document.querySelectorAll(".column");
-            columnsDOMRepres.forEach(c => {
-                const ulElement = c.querySelector("ul");
-                if (ulElement!=undefined) {
-                    const ulId = ulElement.id;
-                    const quizDOMRepres = ulElement.querySelectorAll(".quiz");
-                    quizDOMRepres.forEach((q, i) => {
-                        const quizTitle = q.querySelector("p").innerText;
-                        const quiz = $quizzesStore.find(q => q.title == quizTitle);
-                        quiz.columnNameItBelongsTo = ulId;
-                        quiz.indexInColumn = i;
-                    });
-                }
-            });
-            console.log($quizzesStore);
-
-          
-            }, 500);  
-        });
+        updateQuizzesBasedOnDOM();
+    });
 
     return dragulaInstanceForQuizzes;
+}
+
+function updateQuizzesBasedOnDOM() {
+    //every quiz in every column updates its columnnameitbelongsto and indexincolumn based on its position in the dom
+    const columnsDOMRepres = document.querySelectorAll(".column");
+    columnsDOMRepres.forEach(c => {
+        const ulElement = c.querySelector("ul");
+        if (ulElement!=undefined) {
+            const ulId = ulElement.id;
+            const quizDOMRepres = ulElement.querySelectorAll(".quiz");
+            quizDOMRepres.forEach((q, i) => {
+                const quizTitle = q.querySelector("p").innerText;
+                const quiz = $quizzesStore.find(q => q.title == quizTitle);
+                quiz.columnNameItBelongsTo = ulId;
+                quiz.indexInColumn = i;
+            });
+        }
+    });
+    console.log($quizzesStore);
 }
 
 function searchCategory() {
@@ -163,7 +146,6 @@ function searchQuiz() {
 
 <!---------------------------------------structure--------------------------------------->
 <!---------------------------------------structure--------------------------------------->
-<h1>{$quizzesStore[$quizzesStore.length-1]}</h1>
 <h1>quizzes </h1>
 
 <QuizEditor isOpen={isQuizEditorOpen} />

@@ -5,6 +5,7 @@
     import { fade, scale } from "svelte/transition";
     import QuizQuestionEditor from "./QuizQuestionEditor.svelte";
     import { onMount } from "svelte";
+    import { QuizDTO, QuizQuestionDTO, quizzesStore } from "../../Store";
 
     export let isOpen = false;
     let quizTitleInp;
@@ -12,24 +13,8 @@
     let isOrderedQuizInp;
     let answerIndecies = [];
 
-    
-    class QuizQuestion {
-        question;
-        options = [];
-        isOrdered = false;
-        answerIndecies = [];
-        timeLimit = 0;
 
-        constructor(question, options, isOrdered, answerIndecies, timeLimit) {
-            this.question = question;
-            this.options = options;
-            this.isOrdered = isOrdered;
-            this.answerIndecies = answerIndecies;
-            this.timeLimit = timeLimit;
-        }
-    }
-
-    $: questions = [new QuizQuestion("are you happy?", ["option 1", "option 2", "option 3"], false, [0]), new QuizQuestion("questionasdasd????", ["option 1", "option 2", "option 3"], false, [0]), new QuizQuestion("hardquestionasdasd?", ["option 1", "option 2", "option 3"], false, [0])];
+    $: questions = [new QuizQuestionDTO("are you happy?", ["option 1", "option 2", "option 3"], [0]), new QuizQuestionDTO("questionasdasd????", ["option 1", "option 2", "option 3"], [0]), new QuizQuestionDTO("hardquestionasdasd?", ["option 1", "option 2", "option 3"], [0])];
     let selectedQuizQuestionInd = -1;
     let dragulaInstanceForQuizQuestions;
 
@@ -68,11 +53,15 @@
     }
 
     function closeQuizEditor() {
+        broadcastEvent("closeQuizEditor");
+    }
+    
+    function saveAndCloseQuizEditor() {
         if (quizTitleInp.value == "") {
             quizTitleInp.value = "cannot be empty";
             return;
         }
-        broadcastEvent("closeQuizEditor");
+        closeQuizEditor();
     }
 
     function feedQuizQuestionEditor(e) {
@@ -91,7 +80,7 @@
     }
 
     function addQuizQuestionSkeleton() {
-        questions = Array(...questions, new QuizQuestion("new question", [], isOrderedQuizInp.checked, [], timeLimitInp.value));
+        questions = Array(...questions, new QuizQuestionDTO("new question", [], []));
     }
 
 </script>

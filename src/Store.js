@@ -19,10 +19,10 @@ class QuizDTO {
 }
 
 class QuizQuestionDTO {
-    questionText = "";
-    options = [];
-    answerIndecies = [];
-    constructor(questionText, options, answerIndecies) {
+    questionText;
+    options;
+    answerIndecies;
+    constructor(questionText="", options=[], answerIndecies=[]) {
         this.questionText = questionText;
         this.options = options;
         this.answerIndecies = answerIndecies;
