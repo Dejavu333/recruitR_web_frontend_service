@@ -1,4 +1,3 @@
-<!-- Popup.svelte -->
 <script>
     import { broadcastEvent } from "cupevents";
     import dragula from "dragula";
@@ -13,7 +12,6 @@
     let isOrderedQuizInp;
     let answerIndecies = [];
 
-
     $: questions = [new QuizQuestionDTO("are you happy?", ["option 1", "option 2", "option 3"], [0]), new QuizQuestionDTO("questionasdasd????", ["option 1", "option 2", "option 3"], [0]), new QuizQuestionDTO("hardquestionasdasd?", ["option 1", "option 2", "option 3"], [0])];
     let selectedQuizQuestionInd = -1;
     let dragulaInstanceForQuizQuestions;
@@ -25,31 +23,29 @@
         return questionName;
     }
 
-    $: isOpen && configurateDragulForQuizQuestions();
+    onMount (() => {
+        console.log("onMount in QuizEditor");
+        configurateDragulForQuizQuestions();
+    });
 
     function configurateDragulForQuizQuestions() {
         console.log("configurateDragulForQuizQuestions");
-        if (isOpen) {
-            // Configure dragula instance only when isOpen is true and inits variables using setTimeout because when isOpen is true we need to wait for the DOM to be rendered
-            setTimeout(() => {
-                quizTitleInp = document.getElementById("quizTitleInp");
-                timeLimitInp = document.getElementById("timeLimitInp");
-                isOrderedQuizInp = document.getElementById("isOrderedQuizInp");
-                quizTitleInp.addEventListener("focus", function () {
-                    if (quizTitleInp.value == "cannot be empty") quizTitleInp.value = "";
-                });
+        quizTitleInp = document.getElementById("quizTitleInp");
+        timeLimitInp = document.getElementById("timeLimitInp");
+        isOrderedQuizInp = document.getElementById("isOrderedQuizInp");
+        quizTitleInp.addEventListener("focus", function () {
+            if (quizTitleInp.value == "cannot be empty") quizTitleInp.value = "";
+        });
 
-                dragulaInstanceForQuizQuestions = dragula([document.querySelector("#questions-list")]);
-                dragulaInstanceForQuizQuestions.on('dragend', () => {
-                    //update spans with indecies
-                    const questionsList = document.querySelector("#questions-list");
-                    const questionSpans = questionsList.querySelectorAll("span");
-                    questionSpans.forEach((span, index) => {
-                        span.innerText = index + 1 + ". ";
-                    });
-                });
-            }, 100);
-        }
+        dragulaInstanceForQuizQuestions = dragula([document.querySelector("#questions-list")]);
+        dragulaInstanceForQuizQuestions.on('dragend', () => {
+            //update spans with indecies
+            const questionsList = document.querySelector("#questions-list");
+            const questionSpans = questionsList.querySelectorAll("span");
+            questionSpans.forEach((span, index) => {
+                span.innerText = index + 1 + ". ";
+            });
+        });
     }
 
     function closeQuizEditor() {
@@ -85,7 +81,7 @@
 
 </script>
 
-  {#if isOpen}
+
   <div class="popup-background" in:fade out:fade>
     <div class="popup-content">
       <input type="text" placeholder="quiz title" id="quizTitleInp" />
@@ -97,19 +93,23 @@
       <button on:click={addQuizQuestionSkeleton}>add question</button>
       <ul id="questions-list">
         {#each questions as quizQuestion, index}
-           <li on:dblclick={feedQuizQuestionEditor} id={String(index)}><span>{index+1}. </span>{trimmedQuestionName(quizQuestion.question)}</li>
+           <li on:dblclick={feedQuizQuestionEditor} id={String(index)}><span>{index+1}. </span>{trimmedQuestionName(quizQuestion.questionText)}</li>
         {/each}
       </ul>
       <QuizQuestionEditor bind:questions={questions} bind:selectedQuesitonInd={selectedQuizQuestionInd} />
-      <button on:click={closeQuizEditor}>Done</button>
+      <button id="closeEditorBtn" on:click={closeQuizEditor}>Cancel</button>
+      <button id="saveAndCloseEditorBtn" on:click={saveAndCloseQuizEditor}>Save</button>
     </div>
   </div>
-  {/if}
 
   <!-- <button on:click={openPopup}>Open Popup</button> -->
 
   <style>
-    /* Add your blur CSS here */
+    #closeEditorBtn {
+      float: right;
+    }
+
+    /* blur */
     .popup-background {
       position: fixed;
       top: 0;
@@ -132,8 +132,8 @@
     }
 
     #isOrderedQuizInp {
-      width: 1rem;
       height: 1rem;
+      width: 1rem;
     }
 
     #questions-list {

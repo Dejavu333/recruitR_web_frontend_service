@@ -6,11 +6,10 @@ import QuizColumn from "../QuizColumn.svelte";
 import QuizEditor from "./QuizEditor.svelte";
 import { QuizDTO, QuizQuestionDTO, quizzesStore } from "../../Store";
 import dragula from "dragula";
-import { onEvent } from "cupevents";
+import { broadcastEvent, onEvent } from "cupevents";
 
 // variables, constants
 //====================================================================================================
-const columnTitles = ["test", "asdasd", "abcabcabc"];
 const errorMessages = {
     emptyError: "cannot be empty",
     duplicateError: "already exists"
@@ -22,7 +21,12 @@ let columnTitleInp;
 // setup
 //====================================================================================================
 //todo fetch quizzes from server
-quizzesStore.update(store => { store.push(new QuizDTO("test",0, "test", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
+quizzesStore.update(store => { store.push(new QuizDTO("test",2, "test1", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
+quizzesStore.update(store => { store.push(new QuizDTO("asdasd",1, "test2", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
+quizzesStore.update(store => { store.push(new QuizDTO("asdasd",4, "test4", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
+quizzesStore.update(store => { store.push(new QuizDTO("test",0, "test3", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
+quizzesStore.update(store => { store.push(new QuizDTO("hellogovner",0, "test5", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
+let columnTitles = [...new Set($quizzesStore.map(q => q.columnNameItBelongsTo))]; 
 // // console.log("quizzesStore in managequiz:"+$quizzesStore);
 onMount(() => {
     console.log("onMount in ManageQuizzes");
@@ -40,6 +44,9 @@ onEvent("openQuizEditor", function (e) {
 });
 onEvent("closeQuizEditor", function (e) {
     isQuizEditorOpen = false;
+});
+onEvent("updateQuizzesBasedOnDOM", function (e) {
+    updateQuizzesBasedOnDOM();
 });
 // functions
 //====================================================================================================
@@ -78,30 +85,52 @@ function configurateDragulaForQuizColumns() {
     // add any additional event listeners or configurations here.
     // add the `removeOnSpill: true` option if needed.
     //on dragend adds column name to quiz
+    dragulaInstanceForQuizzes.on("drag", function (el, target, source, sibling) {
+        o("ondrag");o(document.querySelectorAll(".column"))
+    });
     dragulaInstanceForQuizzes.on("drop", function (el, target, source, sibling) {
-        updateQuizzesBasedOnDOM();
+        broadcastEvent("updateQuizzesBasedOnDOM");
     });
 
     return dragulaInstanceForQuizzes;
 }
-
+function o(o) { console.log(o); }
 function updateQuizzesBasedOnDOM() {
-    //every quiz in every column updates its columnnameitbelongsto and indexincolumn based on its position in the dom
-    const columnsDOMRepres = document.querySelectorAll(".column");
-    columnsDOMRepres.forEach(c => {
-        const ulElement = c.querySelector("ul");
-        if (ulElement!=undefined) {
-            const ulId = ulElement.id;
-            const quizDOMRepres = ulElement.querySelectorAll(".quiz");
-            quizDOMRepres.forEach((q, i) => {
-                const quizTitle = q.querySelector("p").innerText;
-                const quiz = $quizzesStore.find(q => q.title == quizTitle);
-                quiz.columnNameItBelongsTo = ulId;
-                quiz.indexInColumn = i;
-            });
-        }
-    });
-    console.log($quizzesStore);
+   setTimeout(() => {
+       //every quiz in every column updates its columnnameitbelongsto and indexincolumn based on its position in the dom
+       //track changes in the dom due to reposotioning of quizzes
+       const columnsDOMRepres = document.querySelectorAll(".column"); 
+       let updatedQuizzes = [];
+       columnsDOMRepres.forEach(c => {
+           const ulElement = c.querySelector("ul");
+           if (ulElement!=undefined) {
+               const columnName = ulElement.id; 
+               const quizzesDOMRepres = ulElement.querySelectorAll(".quiz");
+               quizzesDOMRepres.forEach((q, i) => {
+                    const quizTitle = q.innerText; 
+                    const quiz = $quizzesStore.find(q => q.title === quizTitle); 
+                    if (quiz!=undefined) {
+                        quiz.columnNameItBelongsTo = columnName;
+                        quiz.indexInColumn = i;
+                        updatedQuizzes.push(quiz);
+                    }
+               });
+           }
+       });
+       //update quizzesStore
+       quizzesStore.update(store => {
+           store.map(q => {
+               const updatedQuiz = updatedQuizzes.find(uq => uq.title === q.title);
+               if (updatedQuiz!=undefined) {
+                   q.columnNameItBelongsTo = updatedQuiz.columnNameItBelongsTo;
+                   q.indexInColumn = updatedQuiz.indexInColumn;
+               }
+           });
+           return store;
+       });
+
+       console.log($quizzesStore);
+    }, 200); 
 }
 
 function searchCategory() {
@@ -127,8 +156,8 @@ function searchCategory() {
 
 function searchQuiz() {
     const searchValue = document.querySelector("#searchQuizInp").value.toLowerCase();
-    const quizDOMRepres = document.querySelectorAll(".quiz");
-    quizDOMRepres.forEach(q => {
+    const quizzesDOMRepres = document.querySelectorAll(".quiz");
+    quizzesDOMRepres.forEach(q => {
         const quizTitle = q.querySelector("p").innerText.toLowerCase();
         if (searchValue === "") {
             q.style.display = "flex";
@@ -147,9 +176,11 @@ function searchQuiz() {
 <!---------------------------------------structure--------------------------------------->
 <!---------------------------------------structure--------------------------------------->
 <h1>quizzes </h1>
+{#if isQuizEditorOpen}
+    <QuizEditor/>
+{/if}
 
-<QuizEditor isOpen={isQuizEditorOpen} />
-
+<button on:click={updateQuizzesBasedOnDOM}>update</button>
 <div class="add-quiz-container">
     <input type="text" maxlength="12" id="columnTitleInp" placeholder="new category..." onkeydown="if (event.keyCode == 13)
         document.getElementById('add').click()"> 
@@ -164,7 +195,7 @@ function searchQuiz() {
 <div class="main-container">
     <ul class="columns">
         {#each columnTitles as columnTitle}
-        <QuizColumn columnTitle={columnTitle} />
+            <QuizColumn columnTitle={columnTitle} />
         {/each}
     </ul>
 </div>

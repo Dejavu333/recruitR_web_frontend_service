@@ -11,6 +11,7 @@ class QuizDTO {
     timeLimit;
     constructor(columnNameItBelongsTo="", indexInColumn=-1, title="untitled", quizQuestions=[], isOrdered=false, timeLimit=600) {
         this.title = title;
+        this.indexInColumn = indexInColumn;
         this.columnNameItBelongsTo = columnNameItBelongsTo;
         this.quizQuestions = quizQuestions;
         this.isOrdered = isOrdered;

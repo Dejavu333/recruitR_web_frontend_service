@@ -1,9 +1,10 @@
+<!---------------------------------------functionality--------------------------------------->
+<!---------------------------------------functionality--------------------------------------->
 <script>
   import { fade, fly, scale } from "svelte/transition";
   import {onEvent, broadcastEvent} from "cupevents";
   import { QuizDTO, quizzesStore } from "../Store";
   import { onMount } from "svelte";
-    import { flip } from "svelte/animate";
   export let quizTitle;
 
   let showOptions = false;
@@ -36,6 +37,7 @@
       store.splice(store.findIndex(q => q.title == quizTitle), 1);
       return store;
     });
+    broadcastEvent("updateQuizzesBasedOnDOM");
   }
 
   function deployQuiz() {
@@ -45,20 +47,22 @@
   // Add a global event listener for clicks
   onEvent("click", hideOptions);
 </script>
+<!---------------------------------------structure--------------------------------------->
+<!---------------------------------------structure--------------------------------------->
 
-
-<li class="quiz" on:dblclick={toggleOptions} in:scale>
+<li class="quiz" on:dblclick|self={toggleOptions} in:scale>
   {#if showOptions}
     <div in:scale out:fade class="options">
-      <div on:click={openQuizEditor}>E</div>
-      <div on:click={deployQuiz} style="margin-left: 0.5rem;">I</div>
-      <div on:click={deleteQuiz}>X</div>
+      <div on:click|once={openQuizEditor}>E</div>
+      <div on:click|once={deployQuiz} style="margin-left: 0.5rem;">I</div>
+      <div on:click|once={deleteQuiz}>X</div>
     </div>
   {/if}
-  <p>{quizTitle}</p>
+  {quizTitle}
 </li>
 
-
+<!---------------------------------------style--------------------------------------->
+<!---------------------------------------style--------------------------------------->
 <style>
   .quiz {
     position: relative;
