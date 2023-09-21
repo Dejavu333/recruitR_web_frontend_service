@@ -1,30 +1,31 @@
+<!---------------------------------------functionality--------------------------------------->
+<!---------------------------------------functionality--------------------------------------->
 <script>
     import { broadcastEvent } from "cupevents";
     import dragula from "dragula";
     import { fade, scale } from "svelte/transition";
-    import QuizQuestionEditor from "./QuizQuestionEditor.svelte";
     import { onMount } from "svelte";
     import { QuizDTO, QuizQuestionDTO, quizzesStore } from "../../Store";
 
-    export let isOpen = false;
+    export let currentlyEditedQuizTitle;
     let quizTitleInp;
     let timeLimitInp;
     let isOrderedQuizInp;
-    let answerIndecies = [];
 
-    $: questions = [new QuizQuestionDTO("are you happy?", ["option 1", "option 2", "option 3"], [0]), new QuizQuestionDTO("questionasdasd????", ["option 1", "option 2", "option 3"], [0]), new QuizQuestionDTO("hardquestionasdasd?", ["option 1", "option 2", "option 3"], [0])];
+    $: quiz = $quizzesStore.find(q => q.title == currentlyEditedQuizTitle);
+    $: questions = $quizzesStore.find(q => q.title == currentlyEditedQuizTitle)?.questions ?? [];
     let selectedQuizQuestionInd = -1;
     let dragulaInstanceForQuizQuestions;
 
     function trimmedQuestionName(questionName) {
-        if (questionName?.length > 10) {
-            return questionName.substring(0, 10) + "...";
+        if (questionName?.length > 16) {
+            return questionName.substring(0, 16) + "...";
         }
         return questionName;
     }
 
     onMount (() => {
-        console.log("onMount in QuizEditor");
+        console.log("QuizEditor mounted");
         configurateDragulForQuizQuestions();
     });
 
@@ -38,13 +39,19 @@
         });
 
         dragulaInstanceForQuizQuestions = dragula([document.querySelector("#questions-list")]);
-        dragulaInstanceForQuizQuestions.on('dragend', () => {
+        dragulaInstanceForQuizQuestions.on('drop', () => {
             //update spans with indecies
             const questionsList = document.querySelector("#questions-list");
             const questionSpans = questionsList.querySelectorAll("span");
             questionSpans.forEach((span, index) => {
                 span.innerText = index + 1 + ". ";
             });
+            //updates questions array based on positions in DOM
+            const reorderedQuestions = [];
+            questionSpans.forEach((span, index) => {
+                reorderedQuestions.push(questions[Number(span.parentElement.id)]);
+            });
+            questions = reorderedQuestions;
         });
     }
 
@@ -57,10 +64,20 @@
             quizTitleInp.value = "cannot be empty";
             return;
         }
+        //todo check if title already exists
+        quizzesStore.update(store => {
+            const quiz = store.find(q => q.title == currentlyEditedQuizTitle)
+            quiz.title = quizTitleInp.value;
+            quiz.timeLimit = timeLimitInp.value;
+            quiz.isOrdered = isOrderedQuizInp.checked;
+            quiz.questions = questions;
+            return store;
+        });
+
         closeQuizEditor();
     }
 
-    function feedQuizQuestionEditor(e) {
+    function selectQuizQuestion(e) {
     try {
         selectedQuizQuestionInd = Number(e.target.id);
         //highlights selected question
@@ -76,34 +93,83 @@
     }
 
     function addQuizQuestionSkeleton() {
-        questions = Array(...questions, new QuizQuestionDTO("new question", [], []));
+        questions = Array(...questions, new QuizQuestionDTO("<<new question>>", ["<<option>>", "<<option>>"], []));
     }
 
+    function addOption(e) {
+        const optionName = "<<option>>";
+        const optionInd = questions[selectedQuizQuestionInd].options.length;
+        const option = optionInd + 1 + ". " + optionName;
+        questions[selectedQuizQuestionInd].options = Array(...questions[selectedQuizQuestionInd].options, option);
+    }
+
+    function updateOptionText(e, index) {
+        questions[selectedQuizQuestionInd].options[index] = e.target.value;
+    }
+
+    //todo remember always change questions because thats what we use when saveandclose is clicked, 
+    function updateAnswer(index) {
+        questions[selectedQuizQuestionInd].answerIndecies = Array(...questions[selectedQuizQuestionInd].answerIndecies, index);
+    }
+
+    function updateQuesionText(e) {
+        questions[selectedQuizQuestionInd].questionText = e.target.value;
+    }
+
+    function removeInputContent(e, ifContent) {
+        if (e.target.value.endsWith(ifContent)) {
+            e.target.value = "";
+        }
+    }
 </script>
-
-
+<!---------------------------------------structure--------------------------------------->
+<!---------------------------------------structure--------------------------------------->
   <div class="popup-background" in:fade out:fade>
     <div class="popup-content">
-      <input type="text" placeholder="quiz title" id="quizTitleInp" />
-      <!-- <input type="text" placeholder="question" id="quizTitleInp" /> -->
-      <input type="text" placeholder="time limit (s)" id="timeLimitInp" />
+      <input type="text" placeholder="quiz title" id="quizTitleInp" value="{quiz?.title}" />
+      <input type="text" placeholder="time limit (s)" id="timeLimitInp" value="{quiz?.timeLimit}" />
       <label for="isOrderedQuiz">ordered</label>
-      <input type="checkbox" id="isOrderedQuizInp" name="isOrderedQuiz" value="isOrderedQuiz">
+      <input type="checkbox" id="isOrderedQuizInp" name="isOrderedQuiz" checked="{quiz?.isOrdered}" />
       <br>
       <button on:click={addQuizQuestionSkeleton}>add question</button>
       <ul id="questions-list">
         {#each questions as quizQuestion, index}
-           <li on:dblclick={feedQuizQuestionEditor} id={String(index)}><span>{index+1}. </span>{trimmedQuestionName(quizQuestion.questionText)}</li>
+           <li on:dblclick={selectQuizQuestion} id={String(index)}><span>{index+1}. </span>{trimmedQuestionName(quizQuestion.questionText)}</li>
         {/each}
       </ul>
-      <QuizQuestionEditor bind:questions={questions} bind:selectedQuesitonInd={selectedQuizQuestionInd} />
+
+      {#if selectedQuizQuestionInd != -1}
+        <div>
+            <input id="questionTextInp" type="text" value={questions[selectedQuizQuestionInd]?.questionText ?? ""} 
+                on:blur={(e) => updateQuesionText(e)}  
+                on:focus={(e) => removeInputContent(e, "<<new question>>")} />
+            <ul>
+                {#each questions[selectedQuizQuestionInd].options as option, index}
+                <div class="optionDiv">
+                    <input type="checkbox" checked={questions[selectedQuizQuestionInd].answerIndecies.includes(index)}
+                        on:change={() => updateAnswer(index)} />
+                    <input type="text" class="optionInput" value={option}
+                        on:blur={(e) => updateOptionText(e, index)} 
+                        on:focus={(e) => removeInputContent(e, "<<option>>")} />
+                </div>
+                {/each}
+            </ul>
+            <ul>
+                <p>answers:</p>
+                {#each questions[selectedQuizQuestionInd].answerIndecies as answerIndex}
+                    <li>{answerIndex}</li>
+                {/each}
+            </ul>
+            <button on:click={addOption}>add opt</button>
+        </div>
+        {/if}
+
       <button id="closeEditorBtn" on:click={closeQuizEditor}>Cancel</button>
       <button id="saveAndCloseEditorBtn" on:click={saveAndCloseQuizEditor}>Save</button>
     </div>
   </div>
-
-  <!-- <button on:click={openPopup}>Open Popup</button> -->
-
+<!---------------------------------------style--------------------------------------->
+<!---------------------------------------style--------------------------------------->
   <style>
     #closeEditorBtn {
       float: right;
@@ -125,7 +191,7 @@
     }
 
     .popup-content {
-      min-width: 20vw;
+      min-width: 40vw;
       background-color: var(--color-white);
       padding: 20px;
       border-radius: 2rem;

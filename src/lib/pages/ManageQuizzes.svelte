@@ -16,6 +16,7 @@ const errorMessages = {
 }
 let dragulaInstanceForQuizzes; // Define a variable to hold the Dragula instance.
 let isQuizEditorOpen = false; //todo maybe move to inner component
+let currentlyEditedQuizTitle = undefined; //todo maybe move to inner component
 let columnTitleInp;
 
 // setup
@@ -27,9 +28,8 @@ quizzesStore.update(store => { store.push(new QuizDTO("asdasd",4, "test4", [new 
 quizzesStore.update(store => { store.push(new QuizDTO("test",0, "test3", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
 quizzesStore.update(store => { store.push(new QuizDTO("hellogovner",0, "test5", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
 let columnTitles = [...new Set($quizzesStore.map(q => q.columnNameItBelongsTo))]; 
-// // console.log("quizzesStore in managequiz:"+$quizzesStore);
 onMount(() => {
-    console.log("onMount in ManageQuizzes");
+    console.log("ManageQuizzes mounted");
     // Initialize Dragula initially.
     dragulaInstanceForQuizzes = configurateDragulaForQuizColumns();
     columnTitleInp = document.getElementById("columnTitleInp")
@@ -41,9 +41,11 @@ onMount(() => {
 
 onEvent("openQuizEditor", function (e) {
     isQuizEditorOpen = true;
+    currentlyEditedQuizTitle = e.detail;
 });
 onEvent("closeQuizEditor", function (e) {
     isQuizEditorOpen = false;
+    currentlyEditedQuizTitle = undefined;
 });
 onEvent("updateQuizzesBasedOnDOM", function (e) {
     updateQuizzesBasedOnDOM();
@@ -85,16 +87,13 @@ function configurateDragulaForQuizColumns() {
     // add any additional event listeners or configurations here.
     // add the `removeOnSpill: true` option if needed.
     //on dragend adds column name to quiz
-    dragulaInstanceForQuizzes.on("drag", function (el, target, source, sibling) {
-        o("ondrag");o(document.querySelectorAll(".column"))
-    });
     dragulaInstanceForQuizzes.on("drop", function (el, target, source, sibling) {
         broadcastEvent("updateQuizzesBasedOnDOM");
     });
 
     return dragulaInstanceForQuizzes;
 }
-function o(o) { console.log(o); }
+
 function updateQuizzesBasedOnDOM() {
    setTimeout(() => {
        //every quiz in every column updates its columnnameitbelongsto and indexincolumn based on its position in the dom
@@ -177,10 +176,9 @@ function searchQuiz() {
 <!---------------------------------------structure--------------------------------------->
 <h1>quizzes </h1>
 {#if isQuizEditorOpen}
-    <QuizEditor/>
+    <QuizEditor currentlyEditedQuizTitle={currentlyEditedQuizTitle} />
 {/if}
 
-<button on:click={updateQuizzesBasedOnDOM}>update</button>
 <div class="add-quiz-container">
     <input type="text" maxlength="12" id="columnTitleInp" placeholder="new category..." onkeydown="if (event.keyCode == 13)
         document.getElementById('add').click()"> 

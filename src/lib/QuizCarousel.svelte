@@ -10,7 +10,7 @@
   let showOptions = false;
 
   onMount( () => {
-    console.log("onMount in QuizCarousel");
+    console.log("quizCarousel mounted");
   })
 
   function toggleOptions() {
@@ -28,11 +28,10 @@
   }
 
   function openQuizEditor() {
-    broadcastEvent("openQuizEditor");
+    broadcastEvent("openQuizEditor", quizTitle);
   }
 
   function deleteQuiz() {
-    console.log("deleteQuiz");
     quizzesStore.update(store => {
       store.splice(store.findIndex(q => q.title == quizTitle), 1);
       return store;
@@ -44,9 +43,10 @@
     console.log("deployQuiz");
   }
 
-  // Add a global event listener for clicks
+  // adds a global event listener for clicks
   onEvent("click", hideOptions);
 </script>
+
 <!---------------------------------------structure--------------------------------------->
 <!---------------------------------------structure--------------------------------------->
 
