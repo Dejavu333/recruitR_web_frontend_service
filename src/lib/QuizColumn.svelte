@@ -4,7 +4,6 @@
   import { onMount } from "svelte";
   import { QuizDTO, quizzesStore } from "../Store";
   import QuizCarousel from "./QuizCarousel.svelte";
-  import { get } from "svelte/store";
 
   export let columnTitle;
   let thisColumnDOMRepres;
@@ -17,18 +16,17 @@
 
   function addQuizCarouselSkeleton() {
     quizzesStore.update(store => {
-      console.log("_______________", columnTitle);
       let ind = thisColumnDOMRepres.children.length;
-      if (store.find(q => q.title == "untitled")) {
-        console.log("found untitled");
+      if (store.find(q => q.title == "<<quiz>>")) {
+        console.log("found quiz");
         let i = 1;
-        while (store.find(q => q.title == "untitled" + i)) {
+        while (store.find(q => q.title == i +". <<quiz>>")) { //todo no. should be in spans
           i++;
         }
-        store.push(new QuizDTO(columnTitle, ind, "untitled" + i));
+        store.push(new QuizDTO(columnTitle, ind, i +". <<quiz>>"));
         return store;
       }
-      store.push(new QuizDTO(columnTitle, ind, "untitled"));
+      store.push(new QuizDTO(columnTitle, ind, "<<quiz>>"));
       return store;
     });
   }

@@ -4,7 +4,8 @@
 import { onMount } from "svelte";
 import QuizColumn from "../QuizColumn.svelte";
 import QuizEditor from "./QuizEditor.svelte";
-import { QuizDTO, QuizQuestionDTO, quizzesStore } from "../../Store";
+import QuizInstanceEditor from "./QuizInstanceEditor.svelte";
+import { QuizDTO, QuizQuestionDTO, quizzesStore} from "../../Store";
 import dragula from "dragula";
 import { broadcastEvent, onEvent } from "cupevents";
 
@@ -15,15 +16,16 @@ const errorMessages = {
     duplicateError: "already exists"
 }
 let dragulaInstanceForQuizzes; // Define a variable to hold the Dragula instance.
-let isQuizEditorOpen = false; //todo maybe move to inner component
+let isQuizEditorOpen = false; //todo maybe move to inner component //todo remove this
+let isQuizInstanceEditorOpen = false; //todo maybe move to inner component
 let currentlyEditedQuizTitle = undefined; //todo maybe move to inner component
 let columnTitleInp;
 
 // setup
 //====================================================================================================
 //todo fetch quizzes from server
-quizzesStore.update(store => { store.push(new QuizDTO("test",2, "test1", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
-quizzesStore.update(store => { store.push(new QuizDTO("asdasd",1, "test2", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
+quizzesStore.update(store => { store.push(new QuizDTO("test",2, "test1", [new QuizQuestionDTO("test?", ["test1", "test2", "test3"],[])], false, 600)); return store; });
+quizzesStore.update(store => { store.push(new QuizDTO("asdasd",1, "test2", [new QuizQuestionDTO("test", ["test1", "test2", "test3"],[])], false, 600)); return store; });
 quizzesStore.update(store => { store.push(new QuizDTO("asdasd",4, "test4", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
 quizzesStore.update(store => { store.push(new QuizDTO("test",0, "test3", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
 quizzesStore.update(store => { store.push(new QuizDTO("hellogovner",0, "test5", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
@@ -36,7 +38,6 @@ onMount(() => {
     columnTitleInp.addEventListener("focus", function () {
         columnTitleInp.value = "";
     });
-
 });
 
 onEvent("openQuizEditor", function (e) {
@@ -49,6 +50,12 @@ onEvent("closeQuizEditor", function (e) {
 });
 onEvent("updateQuizzesBasedOnDOM", function (e) {
     updateQuizzesBasedOnDOM();
+});
+onEvent("closeQuizInstanceEditor", function (e) {
+    isQuizInstanceEditorOpen = false;
+});
+onEvent("openQuizInstanceEditor", function (e) {
+    isQuizInstanceEditorOpen = true;
 });
 // functions
 //====================================================================================================
@@ -87,9 +94,11 @@ function configurateDragulaForQuizColumns() {
     // add any additional event listeners or configurations here.
     // add the `removeOnSpill: true` option if needed.
     //on dragend adds column name to quiz
+
     dragulaInstanceForQuizzes.on("drop", function (el, target, source, sibling) {
         broadcastEvent("updateQuizzesBasedOnDOM");
     });
+
 
     return dragulaInstanceForQuizzes;
 }
@@ -98,7 +107,8 @@ function updateQuizzesBasedOnDOM() {
    setTimeout(() => {
        //every quiz in every column updates its columnnameitbelongsto and indexincolumn based on its position in the dom
        //track changes in the dom due to reposotioning of quizzes
-       const columnsDOMRepres = document.querySelectorAll(".column"); 
+
+       const columnsDOMRepres = document.querySelectorAll(".column");
        let updatedQuizzes = [];
        columnsDOMRepres.forEach(c => {
            const ulElement = c.querySelector("ul");
@@ -116,20 +126,26 @@ function updateQuizzesBasedOnDOM() {
                });
            }
        });
-       //update quizzesStore
-       quizzesStore.update(store => {
-           store.map(q => {
-               const updatedQuiz = updatedQuizzes.find(uq => uq.title === q.title);
-               if (updatedQuiz!=undefined) {
-                   q.columnNameItBelongsTo = updatedQuiz.columnNameItBelongsTo;
-                   q.indexInColumn = updatedQuiz.indexInColumn;
-               }
-           });
-           return store;
-       });
+    //update quizzesStore
+    quizzesStore.update(store => {
+        store.map(q => {
+            const updatedQuiz = updatedQuizzes.find(uq => uq.title === q.title);
+            if (updatedQuiz!=undefined) {
+                q.columnNameItBelongsTo = updatedQuiz.columnNameItBelongsTo;
+                q.indexInColumn = updatedQuiz.indexInColumn;
+            }
+        });
+        return store;
+    });
+    // $quizzesStore.map(q => {
+    //     const updatedQuiz = updatedQuizzes.find(uq => uq.title === q.title);
+    //     if (updatedQuiz!=undefined) {
+    //         q.columnNameItBelongsTo = updatedQuiz.columnNameItBelongsTo;
+    //         q.indexInColumn = updatedQuiz.indexInColumn;
+    //     }});
 
        console.log($quizzesStore);
-    }, 200); 
+    }, 500); 
 }
 
 function searchCategory() {
@@ -157,7 +173,7 @@ function searchQuiz() {
     const searchValue = document.querySelector("#searchQuizInp").value.toLowerCase();
     const quizzesDOMRepres = document.querySelectorAll(".quiz");
     quizzesDOMRepres.forEach(q => {
-        const quizTitle = q.querySelector("p").innerText.toLowerCase();
+        const quizTitle = q.innerText.toLowerCase();
         if (searchValue === "") {
             q.style.display = "flex";
         }
@@ -168,7 +184,24 @@ function searchQuiz() {
             q.style.display = "none";
         }
     });
+    // hides columns that have no quizzes shown
+    const columnsDOMRepres = document.querySelectorAll(".column");
+    columnsDOMRepres.forEach(c => {
+    const quizzesInColumn = c.querySelectorAll(".quiz");
+    const allQuizzesHidden = [...quizzesInColumn].every(q => q.style.display === "none");
+        if (allQuizzesHidden) {
+            c.style.display = "none";
+        } else {
+            c.style.display = "block";
+        }
+    });
     
+}
+
+function readQuizzesFromDB() {
+    //get email used to login
+    //fetch quizzes from db
+    //update quizzesStore
 }
 </script>
 
@@ -177,6 +210,9 @@ function searchQuiz() {
 <h1>quizzes </h1>
 {#if isQuizEditorOpen}
     <QuizEditor currentlyEditedQuizTitle={currentlyEditedQuizTitle} />
+{/if}
+{#if isQuizInstanceEditorOpen}
+    <QuizInstanceEditor />
 {/if}
 
 <div class="add-quiz-container">
@@ -202,6 +238,7 @@ function searchQuiz() {
 <!---------------------------------------style--------------------------------------->
 
 <style>
+
 .add-quiz-container {
   display: flex;
   width: fit-content;

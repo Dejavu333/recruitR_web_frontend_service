@@ -11,9 +11,10 @@
     let quizTitleInp;
     let timeLimitInp;
     let isOrderedQuizInp;
+    let isOrderedOptionsInp;
 
     $: quiz = $quizzesStore.find(q => q.title == currentlyEditedQuizTitle);
-    $: questions = $quizzesStore.find(q => q.title == currentlyEditedQuizTitle)?.questions ?? [];
+    $: questions = $quizzesStore.find(q => q.title == currentlyEditedQuizTitle)?.quizQuestions ?? [];
     let selectedQuizQuestionInd = -1;
     let dragulaInstanceForQuizQuestions;
 
@@ -43,15 +44,13 @@
             //update spans with indecies
             const questionsList = document.querySelector("#questions-list");
             const questionSpans = questionsList.querySelectorAll("span");
-            questionSpans.forEach((span, index) => {
-                span.innerText = index + 1 + ". ";
-            });
             //updates questions array based on positions in DOM
             const reorderedQuestions = [];
             questionSpans.forEach((span, index) => {
                 reorderedQuestions.push(questions[Number(span.parentElement.id)]);
             });
             questions = reorderedQuestions;
+           
         });
     }
 
@@ -70,11 +69,16 @@
             quiz.title = quizTitleInp.value;
             quiz.timeLimit = timeLimitInp.value;
             quiz.isOrdered = isOrderedQuizInp.checked;
-            quiz.questions = questions;
+            quiz.quizQuestions = questions;
             return store;
         });
 
+        upsertQuizInDB(quiz);
         closeQuizEditor();
+    }
+
+    function upsertQuizInDB(quiz) {
+        //todo
     }
 
     function selectQuizQuestion(e) {
@@ -93,23 +97,32 @@
     }
 
     function addQuizQuestionSkeleton() {
-        questions = Array(...questions, new QuizQuestionDTO("<<new question>>", ["<<option>>", "<<option>>"], []));
+        questions = Array(...questions, new QuizQuestionDTO());
+        console.log(questions);
     }
 
     function addOption(e) {
-        const optionName = "<<option>>";
-        const optionInd = questions[selectedQuizQuestionInd].options.length;
-        const option = optionInd + 1 + ". " + optionName;
-        questions[selectedQuizQuestionInd].options = Array(...questions[selectedQuizQuestionInd].options, option);
+        questions[selectedQuizQuestionInd].options = Array(...questions[selectedQuizQuestionInd].options, "<<option>>");
     }
 
     function updateOptionText(e, index) {
         questions[selectedQuizQuestionInd].options[index] = e.target.value;
     }
 
-    //todo remember always change questions because thats what we use when saveandclose is clicked, 
+    //todo remember always change $: questions because thats what we use when saveAndClose is clicked, 
     function updateAnswer(index) {
-        questions[selectedQuizQuestionInd].answerIndecies = Array(...questions[selectedQuizQuestionInd].answerIndecies, index);
+        if (index == undefined) {console.log("index is undefined"); return;}
+        console.log(questions[selectedQuizQuestionInd].answerIndecies);
+        //if not already in answers, add it
+        if (!questions[selectedQuizQuestionInd].answerIndecies.includes(index)) {
+            questions[selectedQuizQuestionInd].answerIndecies.push(index);
+            //rerender
+            questions = [...questions];
+
+            return;
+        }
+        //if already in answers, remove it
+        questions[selectedQuizQuestionInd].answerIndecies = questions[selectedQuizQuestionInd].answerIndecies.filter(i => i != index);
     }
 
     function updateQuesionText(e) {
@@ -131,38 +144,49 @@
       <label for="isOrderedQuiz">ordered</label>
       <input type="checkbox" id="isOrderedQuizInp" name="isOrderedQuiz" checked="{quiz?.isOrdered}" />
       <br>
-      <button on:click={addQuizQuestionSkeleton}>add question</button>
-      <ul id="questions-list">
-        {#each questions as quizQuestion, index}
-           <li on:dblclick={selectQuizQuestion} id={String(index)}><span>{index+1}. </span>{trimmedQuestionName(quizQuestion.questionText)}</li>
-        {/each}
-      </ul>
+      <div id="info">
+          <button on:click={addQuizQuestionSkeleton}>add question</button>
+        <ul id="questions-list">
+            {#each questions as quizQuestion, index (quizQuestion)}
+            <li on:dblclick={selectQuizQuestion} id={String(index)}><span>{index+1}.</span> {trimmedQuestionName(quizQuestion.questionText)}</li>
+            {/each}
+        </ul>
+        <br>
 
       {#if selectedQuizQuestionInd != -1}
-        <div>
-            <input id="questionTextInp" type="text" value={questions[selectedQuizQuestionInd]?.questionText ?? ""} 
+      <div id="info2">
+            <textarea placeholder="Enter Question Text" value={questions[selectedQuizQuestionInd].questionText}
                 on:blur={(e) => updateQuesionText(e)}  
-                on:focus={(e) => removeInputContent(e, "<<new question>>")} />
-            <ul>
-                {#each questions[selectedQuizQuestionInd].options as option, index}
-                <div class="optionDiv">
-                    <input type="checkbox" checked={questions[selectedQuizQuestionInd].answerIndecies.includes(index)}
-                        on:change={() => updateAnswer(index)} />
-                    <input type="text" class="optionInput" value={option}
-                        on:blur={(e) => updateOptionText(e, index)} 
-                        on:focus={(e) => removeInputContent(e, "<<option>>")} />
-                </div>
-                {/each}
-            </ul>
-            <ul>
-                <p>answers:</p>
-                {#each questions[selectedQuizQuestionInd].answerIndecies as answerIndex}
-                    <li>{answerIndex}</li>
-                {/each}
-            </ul>
+                on:focus={(e) => removeInputContent(e, "<<question>>")} />
+            
+                    <br>
+                <label for="isOrderedOptions">ordered</label>
+                <input type="checkbox" id="isOrderedOptionsInp" name="isOrderedOptions" checked={questions[selectedQuizQuestionInd]?.isOrdered ?? false} />   
+    
+                <ul>
+                    {#each questions[selectedQuizQuestionInd].options as option, index}
+                    <div class="optionDiv">
+                        <input type="checkbox" checked={questions[selectedQuizQuestionInd].answerIndecies.includes(index)}
+                            on:change={() => updateAnswer(index)} />
+    
+                        <input type="text" class="optionInput" value={option}
+                            on:blur={(e) => updateOptionText(e, index)} 
+                            on:focus={(e) => removeInputContent(e, "<<option>>")} />
+                    </div>
+                    {/each}
+                </ul>
+    
+                <ul>
+                    <p>answers:</p>
+                    {#each questions[selectedQuizQuestionInd].answerIndecies as answerIndex}
+                        <li>{answerIndex}</li>
+                    {/each}
+                </ul>
+</div>
+
             <button on:click={addOption}>add opt</button>
+            {/if}
         </div>
-        {/if}
 
       <button id="closeEditorBtn" on:click={closeQuizEditor}>Cancel</button>
       <button id="saveAndCloseEditorBtn" on:click={saveAndCloseQuizEditor}>Save</button>
@@ -182,8 +206,8 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-      backdrop-filter: blur(10px); /* Apply blur to the background */
+      background: rgba(0, 0, 0, 0.5); /* semi-transparent background */
+      backdrop-filter: blur(10px); /* applies blur to the background */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -191,18 +215,21 @@
     }
 
     .popup-content {
-      min-width: 40vw;
+      min-width: 75vw;
       background-color: var(--color-white);
       padding: 20px;
       border-radius: 2rem;
     }
 
-    #isOrderedQuizInp {
+    input[type="checkbox"] {
       height: 1rem;
       width: 1rem;
     }
 
     #questions-list {
+      overflow: scroll;
+      width: 20rem;
+      height: 35rem;
       list-style-type: none;
       border: 1px solid black;
     }
@@ -210,5 +237,13 @@
     #questions-list li {
       margin: 1rem;
       border-bottom: 1px solid black;
+    }
+
+    #info {
+      display: flex;
+    }
+
+    #info2 {
+      display: block;
     }
   </style>

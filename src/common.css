@@ -53,7 +53,7 @@ a:hover {
   background: #ff4444;
 } */
 
-input {
+input, textarea {
   padding: 0 1rem;
   height: 1rem;
   width: 11vw;
@@ -62,6 +62,10 @@ input {
   padding: 0.4rem;
   box-shadow: var(--shadow-primary);
   border: none;
+}
+textarea {
+  width: 40rem;
+  height: 5rem;
 }
 
 ul {
