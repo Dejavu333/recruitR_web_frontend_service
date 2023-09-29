@@ -8,6 +8,7 @@ import QuizInstanceEditor from "./QuizInstanceEditor.svelte";
 import { QuizDTO, QuizQuestionDTO, quizzesStore} from "../../Store";
 import dragula from "dragula";
 import { broadcastEvent, onEvent } from "cupevents";
+    import Config from "../../Config";
 
 // variables, constants
 //====================================================================================================
@@ -24,6 +25,7 @@ let columnTitleInp;
 // setup
 //====================================================================================================
 //todo fetch quizzes from server
+readQuizzesFromDB();
 quizzesStore.update(store => { store.push(new QuizDTO("test",2, "test1", [new QuizQuestionDTO("test?", ["test1", "test2", "test3"],[])], false, 600)); return store; });
 quizzesStore.update(store => { store.push(new QuizDTO("asdasd",1, "test2", [new QuizQuestionDTO("test", ["test1", "test2", "test3"],[])], false, 600)); return store; });
 quizzesStore.update(store => { store.push(new QuizDTO("asdasd",4, "test4", [new QuizQuestionDTO("test", ["test", "test", "test"],[])], false, 600)); return store; });
@@ -199,9 +201,24 @@ function searchQuiz() {
 }
 
 function readQuizzesFromDB() {
-    //get email used to login
-    //fetch quizzes from db
-    //update quizzesStore
+   //todo get email from jwt
+    const email = document.cookie.split(";").find(c => c.includes("email")).split("=")[1];
+    if (email == undefined) {
+        console.log("email is undefined");
+        return;
+    }
+    const url = Config.CURATOR_SERVICE_URL + Config.LIST_QUIZZES_ROUTE + "?owneremail=" + email;
+    const res  = fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    .then(res => res.json())
+    .then(quizzesData => {
+        console.log(quizzesData);
+        //todo update quizzesStore
+    });
 }
 </script>
 

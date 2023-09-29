@@ -34,6 +34,7 @@ async function login() {
           return;
       }
       document.cookie = `jwt=${data.token}; path=/`; // Store the JWT in a cookie
+      document.cookie = `email=${email}; path=/`; // Store the email in a cookie
       window.location = '/#/managequizzes'; // Redirect to the home page
 
     } catch (err) {

@@ -12,7 +12,7 @@
   import Router from 'svelte-spa-router';
   import Navbar from './lib/Navbar.svelte';
 
-  let loggedIn = true; //todo change to false
+  let loggedIn = false; //todo change to false if not debugging
   const jwt = document.cookie.split(';').find(c => c.trim().startsWith('jwt='));
   if (jwt) {
     loggedIn = true;
