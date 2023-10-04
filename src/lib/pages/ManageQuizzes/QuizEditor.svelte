@@ -5,7 +5,7 @@
     import dragula from "dragula";
     import { fade, scale } from "svelte/transition";
     import { onMount } from "svelte";
-    import { QuizDTO, QuizQuestionDTO, quizzesStore } from "../../Store";
+    import { QuizDTO, QuizQuestionDTO, quizzesStore } from "../../../store";
 
     export let currentlyEditedQuizTitle;
     let quizTitleInp;
@@ -28,16 +28,16 @@
     onMount (() => {
         console.log("QuizEditor mounted");
         configurateDragulForQuizQuestions();
-    });
-
-    function configurateDragulForQuizQuestions() {
-        console.log("configurateDragulForQuizQuestions");
         quizTitleInp = document.getElementById("quizTitleInp");
         timeLimitInp = document.getElementById("timeLimitInp");
         isOrderedQuizInp = document.getElementById("isOrderedQuizInp");
         quizTitleInp.addEventListener("focus", function () {
             if (quizTitleInp.value == "cannot be empty") quizTitleInp.value = "";
         });
+    });
+
+    function configurateDragulForQuizQuestions() {
+        console.log("configurateDragulForQuizQuestions");
 
         dragulaInstanceForQuizQuestions = dragula([document.querySelector("#questions-list")]);
         dragulaInstanceForQuizQuestions.on('drop', () => {

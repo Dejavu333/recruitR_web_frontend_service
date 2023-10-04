@@ -2,7 +2,7 @@
 <!---------------------------------------functionality--------------------------------------->
 <script>
 import { isEmail } from 'validator';
-import Config from '../../Config';
+import Config from '../../../config';
 
 let email = '';
 let password = '';

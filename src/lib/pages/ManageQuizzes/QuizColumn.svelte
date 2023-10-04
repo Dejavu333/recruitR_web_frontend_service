@@ -2,7 +2,7 @@
 <!---------------------------------------functionality--------------------------------------->
 <script>
   import { onMount } from "svelte";
-  import { QuizDTO, quizzesStore } from "../Store";
+  import { QuizDTO, quizzesStore } from "../../../store";
   import QuizCarousel from "./QuizCarousel.svelte";
 
   export let columnTitle;
@@ -11,7 +11,7 @@
 
   onMount(() => {
     thisColumnDOMRepres = document.getElementById(columnTitle);
-    console.log("onMount in QuizColumn");
+    console.log("QuizColumn mounted");
   });
 
   function addQuizCarouselSkeleton() {
@@ -42,7 +42,6 @@
     <button class="button addquiz-button" on:click={addQuizCarouselSkeleton}>+</button>
   </div>
   <ul class="quiz-list" id="{columnTitle}">
-    <!-- I thought the data being passed (the orderid) would force a parity check but I actually had to pass the orderid again as key for the loop. -->
     {#each quizzesOfThisColumn as quiz (quiz.title)}
         <QuizCarousel quizTitle={quiz.title} />
     {/each}

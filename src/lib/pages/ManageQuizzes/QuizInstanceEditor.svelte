@@ -4,7 +4,7 @@
     import { broadcastEvent } from "cupevents";
     import { fade, scale } from "svelte/transition";
     import { onMount } from "svelte";
-    import { QuizDTO, QuizQuestionDTO, quizzesStore } from "../../Store";
+    import { QuizDTO, QuizQuestionDTO, quizzesStore } from "../../../store";
 
     onMount (() => {
         console.log("QuizInstanceEditor mounted");

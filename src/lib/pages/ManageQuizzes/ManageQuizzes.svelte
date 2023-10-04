@@ -2,13 +2,13 @@
 <!---------------------------------------functionality--------------------------------------->
 <script>
 import { onMount } from "svelte";
-import QuizColumn from "../QuizColumn.svelte";
+import QuizColumn from "./QuizColumn.svelte";
 import QuizEditor from "./QuizEditor.svelte";
 import QuizInstanceEditor from "./QuizInstanceEditor.svelte";
-import { QuizDTO, QuizQuestionDTO, quizzesStore} from "../../Store";
+import { QuizDTO, QuizQuestionDTO, quizzesStore} from "../../../store";
 import dragula from "dragula";
 import { broadcastEvent, onEvent } from "cupevents";
-    import Config from "../../Config";
+import Config from "../../../config";
 
 // variables, constants
 //====================================================================================================
@@ -24,7 +24,6 @@ let columnTitleInp;
 
 // setup
 //====================================================================================================
-//todo fetch quizzes from server
 readQuizzesFromDB();
 quizzesStore.update(store => { store.push(new QuizDTO("test",2, "test1", [new QuizQuestionDTO("test?", ["test1", "test2", "test3"],[])], false, 600)); return store; });
 quizzesStore.update(store => { store.push(new QuizDTO("asdasd",1, "test2", [new QuizQuestionDTO("test", ["test1", "test2", "test3"],[])], false, 600)); return store; });
@@ -100,7 +99,6 @@ function configurateDragulaForQuizColumns() {
     dragulaInstanceForQuizzes.on("drop", function (el, target, source, sibling) {
         broadcastEvent("updateQuizzesBasedOnDOM");
     });
-
 
     return dragulaInstanceForQuizzes;
 }
@@ -202,7 +200,7 @@ function searchQuiz() {
 
 function readQuizzesFromDB() {
    //todo get email from jwt
-    const email = document.cookie.split(";").find(c => c.includes("email")).split("=")[1];
+    const email = document.cookie.split(";").find(c => c.includes("email"))?.split("=")[1];
     if (email == undefined) {
         console.log("email is undefined");
         return;
@@ -262,8 +260,8 @@ function readQuizzesFromDB() {
   height: fit-content;
   margin: 1rem auto;
   background: var(--color-light);
-  border-radius: 2rem;
-  padding: 0.4rem;
+  border-radius: var(--border-radius-primary);
+  padding: var(--padding-primary);
   box-shadow: var(--shadow-primary);
 }
 .columns {
@@ -279,9 +277,9 @@ function readQuizzesFromDB() {
   padding: 0 1rem;
   height: 4rem;
   width: 11vw;
-  border-radius: 2rem;
+  border-radius: var(--border-radius-primary);
   background: var(--color-secondary);
-  padding: 0.4rem;
+  padding: var(--padding-primary);
   box-shadow: var(--shadow-primary);
 }
 

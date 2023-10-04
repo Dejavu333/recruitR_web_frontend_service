@@ -3,8 +3,8 @@
 <script>
   import {onEvent, broadcastEvent} from "cupevents";
   import { onMount } from "svelte";
-  import { quizzesStore } from "../Store";
-  import { scale } from "svelte/transition";
+  import { quizzesStore } from "../../../store";
+  import { fade, scale } from "svelte/transition";
   export let quizTitle;
 
   let showOptions = false;
@@ -62,7 +62,7 @@
 <!---------------------------------------structure--------------------------------------->
 <li class="quiz scale-element" on:dblclick|self={toggleOptions} in:scale={{duration: 300, delay: 100}} out:scale={{duration: 300, delay: 100}}>
   {#if showOptions}
-    <div class="options">
+    <div class="options" in:scale out:fade>
       <div on:click|once={openQuizEditor}>E</div>
       <div on:click|once={openQuizInstanceEditor} style="margin-left: 0.5rem;">I</div>
       <div on:click|once={deleteQuiz}>X</div>

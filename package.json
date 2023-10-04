@@ -17,6 +17,7 @@
     "cupevents": "^1.0.1",
     "dragula": "^3.7.3",
     "express-validator": "^7.0.1",
+    "svelte-dnd-action": "^0.9.30",
     "svelte-spa-router": "^3.3.0"
   }
 }

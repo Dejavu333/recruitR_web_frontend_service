@@ -1,18 +1,18 @@
 <!---------------------------------------functionality--------------------------------------->
 <!---------------------------------------functionality--------------------------------------->
 <script>
-  import Login from './lib/pages/Login.svelte';
-  import Register from './lib/pages/Register.svelte';
-  import ManageQuizzes from './lib/pages/ManageQuizzes.svelte';
-  import AttendQuiz from './lib/pages/AttendQuiz.svelte';
-  import NotFound from './lib/pages/NotFound.svelte';
-  import EmailTemplates from './lib/pages/EmailTemplates.svelte';
-  import Settings from './lib/pages/Settings.svelte';
-  import ManageQuizInstances from './lib/pages/ManageQuizInstances.svelte';
+  import Login from './lib/pages/Auth/Login.svelte';
+  import Register from './lib/pages/Auth/Register.svelte';
+  import ManageQuizzes from './lib/pages/ManageQuizzes/ManageQuizzes.svelte';
+  import AttendQuiz from './lib/pages/AttendQuiz/AttendQuiz.svelte';
+  import NotFound from './lib/pages/NotFound/NotFound.svelte';
+  import EmailTemplates from './lib/pages/EmailTemplates/EmailTemplates.svelte';
+  import Settings from './lib/pages/Settings/Settings.svelte';
+  import ManageQuizInstances from './lib/pages/ManageQuizInstances/ManageQuizInstances.svelte';
   import Router from 'svelte-spa-router';
-  import Navbar from './lib/Navbar.svelte';
+  import Navbar from './lib/shared/Navbar.svelte';
 
-  let loggedIn = false; //todo change to false if not debugging
+  let loggedIn = true; //todo change to false if not debugging
   const jwt = document.cookie.split(';').find(c => c.trim().startsWith('jwt='));
   if (jwt) {
     loggedIn = true;

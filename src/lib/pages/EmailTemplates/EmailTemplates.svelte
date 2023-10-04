@@ -73,7 +73,7 @@
 <!---------------------------------------structure--------------------------------------->
 <!---------------------------------------structure--------------------------------------->
 <div id="page-wrapper" class="clearfix">
-  <h1>Mails</h1>
+  <h1>mails</h1>
   <p>editor for templating</p>
 
   <form action="#" method="POST" id="file-form">
@@ -98,17 +98,15 @@
 <!---------------------------------------style--------------------------------------->
 <style>
 h1 {
-  font: 50px/1 "Lobster", cursive;
-  text-shadow: 2px 1px 0 transparent, 5px 4px 0 rgb(187, 214, 103);
   margin: 0;
 }
 
 #page-wrapper {
-  width: 960px;
+  width: 80vw;
   min-height: 300px;
-  padding: var(--margin-primary); 
-  background: var(--color-primary);
-  border: var(--border-thickness-primary) solid var(--color-light-primary);
+  padding: var(--padding-primary);
+  background: var(--color-light);
+  border-radius: var(--border-radius-primary);
 }
 
 #file-form {
