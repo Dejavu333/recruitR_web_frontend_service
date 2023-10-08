@@ -141,6 +141,7 @@
       <div class="quiz-container">
         <div id="questionsEditor" class="editor-section">
           <label for="quizTitle">Quiz Title</label>
+          <br>
           <input type="text" placeholder="Quiz Title" id="quizTitleInp" value="{quiz?.title}" />
           <br>
           <label for="timeLimit">Time Limit (s)</label>
@@ -150,56 +151,64 @@
           <input type="checkbox" id="isOrderedQuizInp" name="isOrderedQuiz" checked="{quiz?.isOrdered}" />
           <br>
           <button on:click={addQuizQuestionSkeleton}>Add Question</button>
-          <ul id="questions-list">
-            {#each questions as quizQuestion, index (quizQuestion)}
-            <li on:dblclick={selectQuizQuestion} id={String(index)}><span>{index+1}.</span>
-              {trimmedQuestionName(quizQuestion.questionText)}</li>
-            {/each}
-          </ul>
-        </div><!-- questions editor -->
-        {#if selectedQuizQuestionInd != -1}
-        <div id="optionsEditor" class="editor-section" in:scale out:scale>
+            <div class="master">
+              <ul id="questions-list" class="sleeve">
+                {#each questions as quizQuestion, index (quizQuestion)}
+                <li on:dblclick={selectQuizQuestion} id={String(index)} class="sleeve" ><span>  {index+1}.</span>
+                  {trimmedQuestionName(quizQuestion.questionText)}</li>
+                {/each}
+              </ul>
+            </div>
+      
+    </div><!-- questions editor -->
+    
+    {#if selectedQuizQuestionInd != -1}
+    <div id="optionsEditor" class="editor-section" in:scale out:scale>
+        <label for="questionText">Question Text</label>
           <textarea placeholder="Enter Question Text" value={questions[selectedQuizQuestionInd].questionText}
-            on:blur={(e)=> updateQuesionText(e)}  
-            on:focus={(e) => removeInputContent(e, "<<question>>")} />
-          
+          on:blur={(e)=> updateQuesionText(e)}  
+          on:focus={(e) => removeInputContent(e, "<<question>>")} />
+            
           <br>
           <label for="isOrderedOptions">Ordered Options</label>
           <input type="checkbox" id="isOrderedOptionsInp" name="isOrderedOptions" checked={questions[selectedQuizQuestionInd]?.isOrdered ?? false} />   
-  
+          
+          <br>
+          <button on:click={addOption}>Add Option</button>
           <ul>
-            <button on:click={addOption}>Add Option</button>
             {#each questions[selectedQuizQuestionInd].options as option, index}
             <div class="optionDiv">
               <input type="checkbox" checked={questions[selectedQuizQuestionInd].answerIndecies.includes(index)}
                 on:change={() => updateAnswer(index)} />
   
-              <input type="text" class="optionInput" value={option}
+                <input type="text" class="optionInput" value={option}
                 on:blur={(e) => updateOptionText(e, index)} 
                 on:focus={(e) => removeInputContent(e, "<<option>>")} />
-            </div>
-            {/each}
-          </ul>
-  
-          <ul>
-            <p>Answers:</p>
+                </div>
+                {/each}
+            </ul>
+            
+            <!-- <ul>
+                <p>Answers:</p>
             {#each questions[selectedQuizQuestionInd].answerIndecies as answerIndex}
               <li>{answerIndex}</li>
-            {/each}
-          </ul>
+              {/each}
+            </ul> -->
         </div><!-- options editor -->
+        <div class="button-container" in:scale out:scale>
+            <button id="saveAndCloseEditorBtn" on:click={saveAndCloseQuizEditor}>Save</button>
+          <button id="closeEditorBtn" on:click={closeQuizEditor}>Cancel</button>
+        </div>
         {/if}
-      </div><!-- quiz container -->
-  
-      <div class="button-container">
-        <button id="closeEditorBtn" on:click={closeQuizEditor}>Cancel</button>
-        <button id="saveAndCloseEditorBtn" on:click={saveAndCloseQuizEditor}>Save</button>
-      </div>
+    </div><!-- quiz container -->
 
     </div> <!-- popup content -->
 </div> <!-- popup background -->
   
 <style>
+span {
+    margin-left: 0.5rem;
+}
 .popup-background {
     position: fixed;
     top: 0;
@@ -215,36 +224,104 @@
 }
 
 .popup-content {
-    min-width: 75vw;
+    overflow: hidden;
+    min-width: 70rem;
+    min-height: 45rem;
     background-color: var(--color-light);
-    padding: 20px;
+    padding: 0px;
     border-radius: 2rem;
 }
 
 .quiz-container {
+    min-height: 40rem;
     display: flex;
     justify-content: space-between;
+    position: relative; /* Add relative positioning to the quiz container */
+}
+
+#questionsEditor {
+    width: 18rem;
+    padding: 20px;
+    left: 0; /* Position it at the left of the quiz container */
+    z-index: 2; /* Increase the z-index to make it appear above the quiz container */
 }
 
 #optionsEditor {
-  width: 50%;
-  height: 110%;
-  position: relative; /* Remove absolute positioning */
-  background-color: white; /* Set the background color to create the "paper sheet" effect */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a box shadow */
-  border-radius: 2rem;
-  padding: 20px;
-  z-index: 1; /* Bring the optionsEditor to the front */
+    width: 45rem;
+    min-height: 50rem;
+    position: absolute; /* Use absolute positioning for the optionsEditor */
+    right: 3rem; /* Position it at the right of the quiz container */
+    background-color: white; /* Set the background color to create the "paper sheet" effect */
+    padding: 20px;
+    z-index: 10; /* Increase the z-index to make it appear above the quiz container */
+}
+
+#optionsEditor:after {
+    content: "";
+    position: absolute;
+    right: -8rem;
+    top: -10rem;
+    height: 70rem;
+    width: 58rem;
+    background: var(--color-primary);
+    transform: rotate(7deg);
+    box-shadow: 0 0 0.2rem 0.4rem rgba(0, 0, 0, 0.2);
+    z-index: -1;
+}
+
+#optionsEditor:before {
+    content: "";
+    position: absolute;
+    right: 10rem;
+    top: 30.5rem;
+    height: 70rem;
+    width: 58rem;
+    background: var(--color-secondary);
+    transform: rotate(87deg);
+    box-shadow: 0 0 0.2rem 0.4rem rgba(0, 0, 0, 0.2);
+    z-index: -1;
 }
 
 .button-container {
+    position: absolute;
     display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
+    justify-content: space-between;
+    bottom: 0;
+    margin: 1rem;
+    z-index:10;
+}
+
+.button-container>button {
+
+    width: 3rem;
+    height: 3rem;
+    border-radius: 5rem;
 }
 
 .optionDiv {
     display: flex;
     align-items: center;
 }
+
+/* Scrollable ul elements */
+ul {
+    max-height: 25rem; /* Specify a max-height */
+    overflow-y: auto; /* Enable vertical scrolling when content exceeds the container */
+    /* ... other styles ... */
+}
+
+textarea {
+    width: 45rem;
+    height: 10rem;
+    border-radius: 2rem;
+    border: 1px solid var(--color-primary);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.master {
+    height: 20rem;
+}
+
+
 </style>

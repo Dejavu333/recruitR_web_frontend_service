@@ -3,7 +3,7 @@
   /* variables */
   --color-primary: hsl(119, 46%, 58%);
   --color-hightlight: hsl(119, 46%, 62%);
-  --color-secondary: hsl(264, 32%, 70%);
+  --color-secondary: #ae9acb;
   --color-light: hsl(145, 32%, 75%);
   --color-black: rgb(30, 30, 30);
   --color-white: rgb(255, 255, 255);
@@ -134,3 +134,28 @@ button:hover {
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
   filter: alpha(opacity=20);
 }
+
+/* style scrollbar to the left side */
+::-webkit-scrollbar {
+  max-width: 0.5rem;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-grey);
+  border-radius: var(--border-radius-primary);
+}
+
+.parent {
+  overflow: auto;
+  transform: scaleX(-1); 
+}
+
+.sleeve {
+  transform: scaleX(-1);
+}         
+          
+
