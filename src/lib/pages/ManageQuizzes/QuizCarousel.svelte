@@ -106,11 +106,11 @@
       cursor: pointer;
       margin: 0.1rem;
       box-shadow: var(--shadow-primary);
-    border-radius: 10rem;
-    background-color: var(--color-secondary);
+      border-radius: 10rem;
+      background-color: var(--color-secondary);
   }
 
   .options > div:hover {
-    background-color: var(--color-hightlight);
+    background-color: var( --color-highlight-secondary);
   }
 </style>

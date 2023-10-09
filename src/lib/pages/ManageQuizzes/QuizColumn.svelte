@@ -65,6 +65,8 @@
     border-radius: 2rem;
     padding: 0.1rem;
     box-shadow: var(--shadow-primary);
+    background-color: var(--color-light) !important;
+
   }
 
   .default-quiz-column .column-header {
@@ -77,15 +79,14 @@
 
   .column-button {
     text-align: center;
-    padding: 0.1rem;
   }
 
   .addquiz-button {
-    background-color: var(--color-primary);
+    background-color: var(--color-light);
     margin: 0.6rem auto 0.6rem auto;
   }
 
   .addquiz-button:hover {
-    background-color: var(--color-hightlight);
+    background-color: var( --color-highlight-light);
   }
 </style>

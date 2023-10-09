@@ -259,7 +259,7 @@ function readQuizzesFromDB() {
   width: fit-content;
   height: fit-content;
   margin: 1rem auto;
-  background: var(--color-light);
+  background: var(--color-primary);
   border-radius: var(--border-radius-primary);
   padding: var(--padding-primary);
   box-shadow: var(--shadow-primary);
@@ -276,9 +276,9 @@ function readQuizzesFromDB() {
 .addcategory-button {
   padding: 0 1rem;
   height: 4rem;
-  width: 11vw;
+  width: 5rem;
   border-radius: var(--border-radius-primary);
-  background: var(--color-secondary);
+  background: var(--color-primary);
   padding: var(--padding-primary);
   box-shadow: var(--shadow-primary);
 }

@@ -88,8 +88,11 @@
             const questionSpans = questionsList.querySelectorAll("li");
             questionSpans.forEach((span, index) => {
                 span.style.backgroundColor = "transparent";
+                span.style.backgroundImage = "none";
             });
-            e.target.style.backgroundColor = "#ae9acb";
+            //vertical gradient that goes from red to "#b8dbc7";
+            e.target.style.backgroundImage = "linear-gradient(to right, #73cb72, #abd4bc)";
+
         } catch (e) {
             console.log(e);
         }
@@ -140,17 +143,17 @@
     <div class="popup-content">
       <div class="quiz-container">
         <div id="questionsEditor" class="editor-section">
-          <label for="quizTitle">Quiz Title</label>
+          <label for="quizTitle">quiz title:</label>
           <br>
-          <input type="text" placeholder="Quiz Title" id="quizTitleInp" value="{quiz?.title}" />
+          <input type="text" placeholder="quiz title" id="quizTitleInp" value="{quiz?.title}" />
           <br>
-          <label for="timeLimit">Time Limit (s)</label>
-          <input type="text" placeholder="Time Limit (s)" id="timeLimitInp" value="{quiz?.timeLimit}" />
+          <label for="timeLimit">time limit (s):</label>
+          <input type="text" placeholder="time limit (s)" id="timeLimitInp" value="{quiz?.timeLimit}" />
           <br>
-          <label for="isOrderedQuiz">Ordered Questions</label>
+          <label for="isOrderedQuiz">ordered questions:</label>
           <input type="checkbox" id="isOrderedQuizInp" name="isOrderedQuiz" checked="{quiz?.isOrdered}" />
           <br>
-          <button on:click={addQuizQuestionSkeleton}>Add Question</button>
+          <button on:click={addQuizQuestionSkeleton}>add question</button>
             <div class="master">
               <ul id="questions-list" class="sleeve">
                 {#each questions as quizQuestion, index (quizQuestion)}
@@ -164,24 +167,24 @@
     
     {#if selectedQuizQuestionInd != -1}
     <div id="optionsEditor" class="editor-section" in:scale out:scale>
-        <label for="questionText">Question Text</label>
-          <textarea placeholder="Enter Question Text" value={questions[selectedQuizQuestionInd].questionText}
+        <label for="questionText">question text:</label>
+          <textarea placeholder="enter question text..." value={questions[selectedQuizQuestionInd].questionText}
           on:blur={(e)=> updateQuesionText(e)}  
           on:focus={(e) => removeInputContent(e, "<<question>>")} />
             
           <br>
-          <label for="isOrderedOptions">Ordered Options</label>
+          <label for="isOrderedOptions">ordered options:</label>
           <input type="checkbox" id="isOrderedOptionsInp" name="isOrderedOptions" checked={questions[selectedQuizQuestionInd]?.isOrdered ?? false} />   
           
           <br>
-          <button on:click={addOption}>Add Option</button>
+          <button on:click={addOption}>add option</button>
           <ul>
             {#each questions[selectedQuizQuestionInd].options as option, index}
             <div class="optionDiv">
               <input type="checkbox" checked={questions[selectedQuizQuestionInd].answerIndecies.includes(index)}
                 on:change={() => updateAnswer(index)} />
   
-                <input type="text" class="optionInput" value={option}
+                <input type="text" class="optionInput" value={option} placeholder="enter option text..."
                 on:blur={(e) => updateOptionText(e, index)} 
                 on:focus={(e) => removeInputContent(e, "<<option>>")} />
                 </div>
@@ -196,8 +199,8 @@
             </ul> -->
         </div><!-- options editor -->
         <div class="button-container" in:scale out:scale>
-            <button id="saveAndCloseEditorBtn" on:click={saveAndCloseQuizEditor}>Save</button>
-          <button id="closeEditorBtn" on:click={closeQuizEditor}>Cancel</button>
+            <button id="saveAndCloseEditorBtn" on:click={saveAndCloseQuizEditor}>save</button>
+          <button id="closeEditorBtn" on:click={closeQuizEditor}>cancel</button>
         </div>
         {/if}
     </div><!-- quiz container -->
@@ -208,6 +211,7 @@
 <style>
 span {
     margin-left: 0.5rem;
+    opacity: 0.25;
 }
 .popup-background {
     position: fixed;
@@ -236,22 +240,22 @@ span {
     min-height: 40rem;
     display: flex;
     justify-content: space-between;
-    position: relative; /* Add relative positioning to the quiz container */
+    position: relative; 
 }
 
 #questionsEditor {
     width: 18rem;
     padding: 20px;
-    left: 0; /* Position it at the left of the quiz container */
+    left: 0; 
     z-index: 2; /* Increase the z-index to make it appear above the quiz container */
 }
 
 #optionsEditor {
     width: 45rem;
     min-height: 50rem;
-    position: absolute; /* Use absolute positioning for the optionsEditor */
-    right: 3rem; /* Position it at the right of the quiz container */
-    background-color: white; /* Set the background color to create the "paper sheet" effect */
+    position: absolute; 
+    right: 3rem; 
+    background-color: white; 
     padding: 20px;
     z-index: 10; /* Increase the z-index to make it appear above the quiz container */
 }
@@ -259,7 +263,7 @@ span {
 #optionsEditor:after {
     content: "";
     position: absolute;
-    right: -8rem;
+    right: -7.5rem;
     top: -10rem;
     height: 70rem;
     width: 58rem;
@@ -273,7 +277,7 @@ span {
     content: "";
     position: absolute;
     right: 10rem;
-    top: 30.5rem;
+    top: 31.1rem;
     height: 70rem;
     width: 58rem;
     background: var(--color-secondary);
@@ -286,16 +290,29 @@ span {
     position: absolute;
     display: flex;
     justify-content: space-between;
-    bottom: 0;
+    bottom: -5rem;
     margin: 1rem;
     z-index:10;
+
 }
 
-.button-container>button {
-
-    width: 3rem;
+button {
+    width: 5.5rem;
     height: 3rem;
-    border-radius: 5rem;
+    border-radius: var(--border-radius-primary);
+    margin: 0.25rem;
+}
+.button-container>button {
+    background-color: var(--color-secondary);
+}
+.button-container>button:hover {
+    background-color: var(--color-highlight-secondary);
+}
+#questionsEditor>button {
+    background-color: var(--color-light);
+}
+#questionsEditor>button:hover {
+    background-color: var(--color-highlight-light);
 }
 
 .optionDiv {
@@ -303,24 +320,22 @@ span {
     align-items: center;
 }
 
-/* Scrollable ul elements */
 ul {
-    max-height: 25rem; /* Specify a max-height */
+    height: 25rem; 
     overflow-y: auto; /* Enable vertical scrolling when content exceeds the container */
-    /* ... other styles ... */
+    /* box-shadow: var(--shadow-primary); */
 }
 
 textarea {
     width: 45rem;
     height: 10rem;
-    border-radius: 2rem;
-    border: 1px solid var(--color-primary);
+    border-radius: var(--border-radius-primary);
     padding: 1rem;
-    margin-bottom: 1rem;
 }
 
+/* .master div is for left side scrollbar */
 .master {
-    height: 20rem;
+    min-height: 20rem;
 }
 
 
