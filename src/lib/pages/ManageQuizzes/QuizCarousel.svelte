@@ -6,14 +6,20 @@
   import { quizzesStore } from "../../../store";
   import { fade, scale } from "svelte/transition";
   export let quizTitle;
-
+  
+  // variables, constants
+  //====================================================================================================
   let showOptions = false;
-
-
+  
+  
+  // setup
+  //====================================================================================================
   onMount( () => {
     console.log("quizCarousel mounted");
   })
-
+  
+  // functions
+  //====================================================================================================
   function toggleOptions() {
     try {
       hideOptions();

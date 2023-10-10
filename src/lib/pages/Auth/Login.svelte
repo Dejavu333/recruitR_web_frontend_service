@@ -4,10 +4,14 @@
 import { isEmail } from 'validator';
 import Config from '../../../config';
 
+// variables, constants
+//====================================================================================================
 let email = '';
 let password = '';
 const authNRoute = Config.CURATOR_SERVICE_URL + Config.AUTHN_ROUTE;
 
+// functions
+//====================================================================================================
 async function login() {
     //syntactic validation
     if (!isEmail(email)) {

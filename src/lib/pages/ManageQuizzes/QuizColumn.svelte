@@ -5,15 +5,21 @@
   import { QuizDTO, quizzesStore } from "../../../store";
   import QuizCarousel from "./QuizCarousel.svelte";
 
+  // variables, constants
+  //====================================================================================================
   export let columnTitle;
   let thisColumnDOMRepres;
   $: quizzesOfThisColumn = $quizzesStore.filter(q => q.columnNameItBelongsTo == columnTitle).sort((a, b) => a.indexInColumn - b.indexInColumn);
-
+  
+  // setup
+  //====================================================================================================
   onMount(() => {
     thisColumnDOMRepres = document.getElementById(columnTitle);
     console.log("QuizColumn mounted");
   });
 
+  // functions
+  //====================================================================================================
   function addQuizCarouselSkeleton() {
     quizzesStore.update(store => {
       let ind = thisColumnDOMRepres.children.length;

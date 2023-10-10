@@ -2,21 +2,27 @@
 <!---------------------------------------functionality--------------------------------------->
 <script>
     import { broadcastEvent } from "cupevents";
-    import { fade, scale } from "svelte/transition";
+    import { draw, fade, fly, scale, crossfade } from "svelte/transition";
+    import { slide } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
     import { onMount } from "svelte";
     import { QuizDTO, QuizQuestionDTO, quizzesStore } from "../../../store";
 
-    export let currentlyEditedQuizTitle;
-    let quizTitleInp;
-    let timeLimitInp;
-    let isOrderedQuizInp;
-    let isOrderedOptionsInp;
-
-    $: quiz = $quizzesStore.find(q => q.title == currentlyEditedQuizTitle);
-    $: questions = $quizzesStore.find(q => q.title == currentlyEditedQuizTitle)?.quizQuestions ?? [];
-    let selectedQuizQuestionInd = -1;
-    let dragulaInstanceForQuizQuestions;
-
+  // variables, constants
+  //====================================================================================================
+  export let currentlyEditedQuizTitle;
+  let quizTitleInp;
+  let timeLimitInp;
+  let isOrderedQuizInp;
+  let isOrderedOptionsInp;
+  
+  $: quiz = $quizzesStore.find(q => q.title == currentlyEditedQuizTitle);
+  $: questions = $quizzesStore.find(q => q.title == currentlyEditedQuizTitle)?.quizQuestions ?? [];
+  let selectedQuizQuestionInd = -1;
+  let dragulaInstanceForQuizQuestions;
+  
+  // setup
+  //====================================================================================================
     function trimmedQuestionName(questionName) {
         if (questionName?.length > 16) {
             return questionName.substring(0, 16) + "...";
@@ -34,7 +40,9 @@
             if (quizTitleInp.value == "cannot be empty") quizTitleInp.value = "";
         });
     });
-
+    
+    // functions
+    //====================================================================================================
     function configurateDragulForQuizQuestions() {
         console.log("configurateDragulForQuizQuestions");
 
@@ -140,7 +148,7 @@
 <!---------------------------------------structure--------------------------------------->
 <!---------------------------------------structure--------------------------------------->
 <div class="popup-background">
-    <div class="popup-content">
+    <div class="popup-content" in:fly out:scale>
       <div class="quiz-container">
         <div id="questionsEditor" class="editor-section">
           <label for="quizTitle">quiz title:</label>
@@ -162,11 +170,10 @@
                 {/each}
               </ul>
             </div>
-      
-    </div><!-- questions editor -->
+          </div><!-- questions editor -->
     
     {#if selectedQuizQuestionInd != -1}
-    <div id="optionsEditor" class="editor-section" in:scale out:scale>
+    <div id="optionsEditor" class="editor-section" in:fly out:scale>
         <label for="questionText">question text:</label>
           <textarea placeholder="enter question text..." value={questions[selectedQuizQuestionInd].questionText}
           on:blur={(e)=> updateQuesionText(e)}  
@@ -179,17 +186,17 @@
           <br>
           <button on:click={addOption}>add option</button>
           <ul>
-            {#each questions[selectedQuizQuestionInd].options as option, index}
-            <div class="optionDiv">
-              <input type="checkbox" checked={questions[selectedQuizQuestionInd].answerIndecies.includes(index)}
-                on:change={() => updateAnswer(index)} />
-  
+                {#each questions[selectedQuizQuestionInd].options as option, index}
+                <div class="optionDiv">
+                <input type="checkbox" checked={questions[selectedQuizQuestionInd].answerIndecies.includes(index)}
+                    on:change={() => updateAnswer(index)} />
+    
                 <input type="text" class="optionInput" value={option} placeholder="enter option text..."
-                on:blur={(e) => updateOptionText(e, index)} 
-                on:focus={(e) => removeInputContent(e, "<<option>>")} />
+                    on:blur={(e) => updateOptionText(e, index)} 
+                    on:focus={(e) => removeInputContent(e, "<<option>>")} />
                 </div>
                 {/each}
-            </ul>
+           </ul>
             
             <!-- <ul>
                 <p>Answers:</p>
@@ -198,8 +205,8 @@
               {/each}
             </ul> -->
         </div><!-- options editor -->
-        <div class="button-container" in:scale out:scale>
-            <button id="saveAndCloseEditorBtn" on:click={saveAndCloseQuizEditor}>save</button>
+        <div class="button-container">
+          <button id="saveAndCloseEditorBtn" on:click={saveAndCloseQuizEditor}>save</button>
           <button id="closeEditorBtn" on:click={closeQuizEditor}>cancel</button>
         </div>
         {/if}

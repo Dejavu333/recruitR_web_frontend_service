@@ -1,6 +1,7 @@
 import {get, writable } from "svelte/store";
 
 const quizzesStore = writable([]);
+
 function listQuizzes(filter) {
     if (filter) {
         return get(quizzesStore).filter(filter);
@@ -26,6 +27,8 @@ function updateQuiz(filter, quiz) {
         return store;
     });
 }
+//=======================================================
+const emailsStore = writable([]);
 
 class QuizDTO {
     title;

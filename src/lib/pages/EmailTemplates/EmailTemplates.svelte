@@ -2,8 +2,17 @@
 <!---------------------------------------functionality--------------------------------------->
 <script>
   import { onMount } from "svelte";
+  // variables, constants
+  //====================================================================================================
 
-  // Function to save content to localStorage
+  // setup
+  //====================================================================================================
+    onMount(() => {
+    updateFileList();
+  });
+
+  // functions
+  //====================================================================================================
   const saveFile = () => {
     const filename = document.getElementById("filename").value;
     const content = document.getElementById("content").value;
@@ -23,7 +32,6 @@
     }
   };
 
-  // Function to update the list of saved files
   const updateFileList = () => {
     const fileList = document.getElementById("file-list");
     fileList.innerHTML = "";
@@ -50,7 +58,6 @@
     });
   };
 
-  // Function to load the content of a selected file
   const loadFile = (filename) => {
     const content = localStorage.getItem(filename);
     if (content) {
@@ -59,16 +66,11 @@
     }
   };
 
-  // Function to delete a file
   const deleteFile = (filename) => {
     localStorage.removeItem(filename);
     updateFileList();
   };
 
-  // Call updateFileList on page load to populate the file list
-  onMount(() => {
-    updateFileList();
-  });
 </script>
 <!---------------------------------------structure--------------------------------------->
 <!---------------------------------------structure--------------------------------------->
